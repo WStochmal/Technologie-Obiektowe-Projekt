@@ -1,24 +1,29 @@
-import logo from './logo.svg';
-import './App.css';
+// libraries
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+
+// layouts
+import AppLayout from "./layouts/AppLayout";
+
+// pages
+import Editor from "./pages/app/Editor";
+import Test from "./test/Test";
+
+// styles
+import "./styles/main.css";
 
 function App() {
+  // const { user } = useAuthContext();
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <main>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/test" element={<Test />} />
+          <Route path="" element={<AppLayout />}>
+            <Route path="editor/:id" element={<Editor />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </main>
   );
 }
 
