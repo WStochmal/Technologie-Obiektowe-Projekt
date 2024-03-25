@@ -1,0 +1,33 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+      "tables": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "name": {"type": "string"},
+            "fields": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {"type": "string"},
+                  "type": {"type": "string", "enum": ["string", "integer", "date"]},
+                  "max_length": {"type": "integer"},
+                  "primary_key": {"type": "boolean"},
+                  "foreign_key": {"type": "boolean"},
+                  "references": {"type": "string"}
+                },
+                "required": ["name", "type"]
+              }
+            }
+          },
+          "required": ["name", "fields"]
+        }
+      }
+    },
+    "required": ["tables"]
+  }
+  

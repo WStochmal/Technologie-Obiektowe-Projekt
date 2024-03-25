@@ -38,7 +38,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'app',
+    'rest_framework',
+    'corsheaders',
+
+    'JSON_SQL',
 ]
 
 CORS_ORIGIN_WHITELIST = [
