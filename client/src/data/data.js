@@ -16,27 +16,27 @@ const data = [
             {
               id: "e1",
               label: "Attribute 1",
-              type: "String",
+              type: "SMALLINT",
             },
             {
               id: "e2",
               label: "Attribute 2",
-              type: "Integer",
+              type: "SMALLINT",
             },
             {
               id: "e3",
               label: "Attribute 3",
-              type: "Integer",
+              type: "SMALLINT",
             },
             {
               id: "e4",
               label: "Attribute 4",
-              type: "Integer",
+              type: "VARCHAR",
             },
             {
               id: "e5",
               label: "Attribute 5",
-              type: "Integer",
+              type: "VARCHAR",
             },
           ],
         },
@@ -54,12 +54,12 @@ const data = [
             {
               id: "e6",
               label: "Attribute 6",
-              type: "Date",
+              type: "VARCHAR",
             },
             {
               id: "e7",
               label: "Attribute 7",
-              type: "String",
+              type: "VARCHAR",
             },
           ],
         },

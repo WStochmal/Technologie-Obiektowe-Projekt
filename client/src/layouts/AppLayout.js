@@ -65,7 +65,7 @@ const AppLayout = () => {
         <div id="editor">
           <Outlet />
         </div>
-        <img
+        {/* <img
           alt=""
           src={icon_arrow}
           id="diagramListBtn"
@@ -75,8 +75,8 @@ const AppLayout = () => {
             transform:
               diagramList === true ? "rotateZ(180deg)" : "rotateZ(0deg)",
           }}
-        />
-        <div
+        /> */}
+        {/* <div
           id="diagramsList"
           style={{
             width: diagramList === true ? "300px" : "0px",
@@ -89,7 +89,7 @@ const AppLayout = () => {
             data[projectIdx].nodes.map((item, itemIdx) => {
               return <p key={itemIdx}>{item.data.label}</p>;
             })}
-        </div>
+        </div> */}
       </section>
     </>
   );

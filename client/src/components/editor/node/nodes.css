@@ -1,0 +1,11 @@
+.custom-node {
+  position: relative;
+  width: 260px;
+  background: white;
+  border: 1px solid black;
+}
+.custom-node-label {
+  padding: 0.5rem;
+  box-sizing: border-box;
+  border-bottom: 1px solid var(--color_grey);
+}

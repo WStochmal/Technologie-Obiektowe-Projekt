@@ -11,19 +11,55 @@ import ReactFlow, {
   MiniMap,
 } from "reactflow";
 import "reactflow/dist/style.css";
-import CustomNode from "../../components/CustomNode";
+import CustomNode from "../../components/editor/node/CustomNode";
 
 import { useEditorContext } from "../../hooks/useEditorContext";
+import CustomConnectionLine from "../../components/editor/connectionLine/CustomConnectionLine";
 
 function Editor() {
-  const [nodes, setNodes] = useState();
-  const [edges, setEdges] = useState();
+  const [nodes, setNodes] = useState([]);
+  const [edges, setEdges] = useState([]);
   const { id } = useParams();
 
   const { data, setData } = useEditorContext();
 
   const onNodesChange = useCallback((changes) => {
     setNodes((nds) => applyNodeChanges(changes, nds));
+
+    if (data && id) {
+      const index = data.findIndex((item) => item.id === parseInt(id));
+
+      if (index !== -1) {
+        // Kopia danych, aby nie modyfikować oryginalnego obiektu
+        const newData = [...data];
+        // Kopia węzła, aby nie modyfikować oryginalnego obiektu
+        const updatedNode = {
+          ...newData[index].nodes.find((node) => node.id === changes.id),
+        };
+
+        // Aktualizacja pozycji x i y na podstawie changes
+
+        // Aktualizacja pozycji x i y na podstawie changes
+        if (
+          changes.position &&
+          changes.position.x !== undefined &&
+          changes.position.y !== undefined
+        ) {
+          console.log(changes);
+          updatedNode.position.x = changes.position.x;
+          updatedNode.position.y = changes.position.y;
+        }
+
+        // Aktualizacja węzła w newData
+        newData[index].nodes = newData[index].nodes.map((node) =>
+          node.id === changes.id ? updatedNode : node
+        );
+        console.log(newData);
+
+        // Ustawienie nowych danych
+        setData(newData);
+      }
+    }
   }, []);
 
   const onEdgesChange = useCallback((changes) => {
@@ -85,7 +121,7 @@ function Editor() {
     }
 
     const newEdge = {
-      id: `${sourceAttributeId}-${targetAttributeId}`, // Używamy ID atrybutów do identyfikacji krawędzi
+      id: `${sourceAttributeId}-${targetAttributeId}`,
       source: source,
       target: target,
       sourceHandle: sourceHandle,
@@ -121,6 +157,7 @@ function Editor() {
           onConnect={handleConnect}
           fitView
           connectionMode="loose"
+          // connectionLineComponent={CustomConnectionLine}
         >
           <Background />
           <Controls />

@@ -1,0 +1,36 @@
+.custom-attribute {
+  position: relative;
+  width: 100%;
+  box-sizing: border-box;
+  border-bottom: 1px solid var(--color_grey);
+  display: flex;
+}
+.custom-attribute:last-of-type {
+  border-bottom: 0;
+}
+.custom-attribute-keyField {
+  width: 15%;
+  border-right: 1px solid var(--color_grey);
+  box-sizing: border-box;
+  padding: 0.25rem;
+}
+.custom-attribute-labelField {
+  width: 45%;
+  border-right: 1px solid var(--color_grey);
+  box-sizing: border-box;
+  padding: 0.25rem;
+  font-size: 15px;
+}
+.custom-attribute-labelField input {
+  width: 100%;
+  box-sizing: border-box;
+}
+.custom-attribute-typeField {
+  width: 40%;
+  box-sizing: border-box;
+  padding: 0.25rem;
+}
+.custom-attribute-typeField select {
+  width: 100%;
+  box-sizing: border-box;
+}
