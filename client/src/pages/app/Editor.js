@@ -2,6 +2,8 @@ import { useState, useCallback, useEffect } from "react";
 import { useParams } from "react-router-dom";
 //const { v4: uuidv4 } = require("uuid");
 
+import axios from "axios";
+
 import { v4 as uuidv4 } from "uuid";
 import ReactFlow, {
   Controls,
@@ -139,6 +141,31 @@ function Editor() {
     setEdges(updatedData);
   };
 
+  const handleGenerateSQL = async () => {
+    const index = data.findIndex((item) => item.id === parseInt(id));
+
+    if (index !== -1) {
+      const sendData = data[index];
+
+      console.log(sendData);
+
+      try {
+        const response = await axios.post(
+          "http://127.0.0.1:5000/generate_sql",
+          sendData
+        );
+
+        // Tutaj możesz obsłużyć odpowiedź od serwera
+        console.log("SQL statements:", response.data.sql_statements);
+      } catch (error) {
+        // Obsługa błędów, np. wyświetlenie komunikatu o błędzie
+        console.error("Error generating SQL:", error);
+      }
+    } else {
+      console.error("Item not found");
+    }
+  };
+
   return (
     <div style={{ height: "100%" }}>
       <button
@@ -146,6 +173,12 @@ function Editor() {
         onClick={handleAddDiagram}
       >
         <p>Dodaj</p>
+      </button>
+      <button
+        style={{ position: "absolute", zIndex: 2, left: "400px" }}
+        onClick={handleGenerateSQL}
+      >
+        <p>Generuj</p>
       </button>
       <div style={{ height: "100%" }}>
         <ReactFlow

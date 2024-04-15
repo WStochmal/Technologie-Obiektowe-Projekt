@@ -65,6 +65,7 @@ const AppLayout = () => {
         <div id="editor">
           <Outlet />
         </div>
+
         {/* <img
           alt=""
           src={icon_arrow}
