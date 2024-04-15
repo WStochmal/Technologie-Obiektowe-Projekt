@@ -15,11 +15,10 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import include, path
-from app.views import create_item
-from JSON_SQL.views import test
+from django.urls import path
+from JSON_SQL.views import convert_to_mysql
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('test/', test, name='test'),
+    path('convert/', convert_to_mysql, name='convert_to_mysql'),
 ]
