@@ -1,7 +1,14 @@
 from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+from django.views.decorators.csrf import csrf_exempt
+import json
 
+@csrf_exempt  # Usunąć jeśli token CSRF jest obsługiwany
+@require_POST
 def convert_to_mysql(request):
     try:
+        # Pobieranie danych JSON z ciała żądania POST
+        #json_data = json.loads(request.body)
         json_data = [
             {
                 "id": 11112,
@@ -114,10 +121,9 @@ def convert_to_mysql(request):
 
                 mysql_code += f"CREATE TABLE IF NOT EXISTS `{table_name}` ("
                 for attr in attributes:
-                    mysql_code += f"    `{attr['id']}` SMALLINT" # Change this line replace SMALLINT with attr['type'] when frontend will send correct data
-                    if attr != attributes[-1]:
-                        mysql_code += ","
-                mysql_code += ");"
+                    mysql_code += f"`{attr['id']}` {attr['type']},"
+                mysql_code = mysql_code.rstrip(',') + ");"  # Usuwamy ostatni przecinek i zamykamy nawias
+
                 processed_tables.add(table_name)
 
         return JsonResponse({'mysql_code': mysql_code})
