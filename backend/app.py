@@ -4,7 +4,7 @@ from controllers.user_controller import user_controller
 from database import Database
 
 app = Flask(__name__)
-CORS(app, origins='*')  # Dostęp dla wszystkich domen
+CORS(app,origins='*')  
 
 app.register_blueprint(user_controller, url_prefix='/api/user')
 db = Database()

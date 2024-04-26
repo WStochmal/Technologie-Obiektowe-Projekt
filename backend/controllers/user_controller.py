@@ -34,15 +34,19 @@ def register():
 @user_controller.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
-    email = data['email']
-    password = data['password']
+    email = data.get('email')
+    password = data.get('password')
+
+    if not email or not password:
+        return jsonify({"message": "Nieprawidłowa nazwa użytkownika lub hasło", "error": "Unauthorized"}), 401
 
     user = user_model.find_user_by_email(email)
-    if not user:
-        return jsonify({"message": "Nieprawidłowa nazwa użytkownika lub hasło","error":"Unauthorized"}), 401
-
-    if not user_model.validate_password(user, password):
-        return jsonify({"message": "Nieprawidłowa nazwa użytkownika lub hasło","error":"Unauthorized"}), 401
+    if not user or not user_model.validate_password(user, password):
+        return jsonify({"message": "Nieprawidłowa nazwa użytkownika lub hasło", "error": "Unauthorized"}), 401
 
     token = jwt.encode({"email": email}, SECRET_KEY, algorithm='HS256')
-    return jsonify({"token": token}), 200
+    response = jsonify({"token": token, "firstname": user.get('firstname'), "image": user.get('image')})
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response, 200
+
+
