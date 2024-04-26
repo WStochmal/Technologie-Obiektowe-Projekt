@@ -1,5 +1,5 @@
 // libraries
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 // layouts
 import AppLayout from "./layouts/AppLayout";
@@ -10,6 +10,7 @@ import Test from "./test/Test";
 
 // styles
 import "./styles/main.css";
+import LoginPage from "./pages/auth/Login";
 
 function App() {
   // const { user } = useAuthContext();
@@ -20,6 +21,7 @@ function App() {
           <Route path="/test" element={<Test />} />
           <Route path="" element={<AppLayout />}>
             <Route path="editor/:id" element={<Editor />} />
+            <Route path="auth/login" element={<LoginPage />} />
           </Route>
         </Routes>
       </BrowserRouter>

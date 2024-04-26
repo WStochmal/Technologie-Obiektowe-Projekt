@@ -2,6 +2,7 @@
   font-family: OpenSans;
   src: url("../fonts/OpenSans.ttf");
 }
+
 @import url("./colorPalette.css");
 * {
   margin: 0;
@@ -13,11 +14,14 @@ body {
   width: 100%;
   height: 100vh;
   overflow: hidden;
+  background: var(--color_light_grey);
 }
+
 body #root {
   width: 100%;
   height: 100%;
 }
+
 main {
   width: 100%;
   height: 100%;
@@ -26,13 +30,13 @@ main {
   flex-direction: column;
 }
 
-header {
+/* header {
   width: 100%;
   height: 60px;
   background: white;
   box-sizing: border-box;
   border-bottom: 1px solid #ccc;
-}
+} */
 
 section {
   width: 100%;
@@ -46,9 +50,9 @@ section aside {
   min-width: 300px;
   height: 100%;
   box-sizing: border-box;
-  border-right: 1px solid #ccc;
-  padding: 0.5rem;
+  background: var(--color_white);
 }
+
 section div#editor {
   width: 100%;
   height: 100%;
@@ -68,6 +72,7 @@ p.header {
   color: var(--color_grey);
   margin-bottom: 0.5rem;
 }
+
 button.menuItem {
   width: 100%;
   margin-bottom: 0.5rem;
@@ -82,6 +87,7 @@ button.menuItem img {
   height: 20px;
   margin-right: 0.5rem;
 }
+
 button.menuItem p {
   font-size: 15px;
 }
@@ -92,4 +98,17 @@ button.menuItem p {
   cursor: pointer;
   position: absolute;
   top: 1rem;
+}
+
+.greyText {
+  color: var(--color_grey);
+}
+
+.redText {
+  color: var(--color_red);
+}
+
+.hightlightText {
+  cursor: pointer;
+  color: var(--color_blue);
 }
