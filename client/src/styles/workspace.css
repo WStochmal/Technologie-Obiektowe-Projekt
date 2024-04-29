@@ -1,0 +1,20 @@
+.diagramList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  list-style-type: none;
+  padding: 0;
+}
+
+.diagramList .diagramItem {
+  flex: 0.25;
+  margin-bottom: 0.5rem;
+  padding: 0.5rem;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  border: 1px solid var(--color_grey);
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  box-sizing: border-box;
+}

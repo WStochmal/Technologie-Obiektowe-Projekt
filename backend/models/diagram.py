@@ -1,13 +1,49 @@
+from bson import ObjectId
+from models.user import User
+from database import Database
+
+db = Database().get_db()
+user_model = User(db)
+
+
 class Diagram:
     def __init__(self, db):
         self.collection = db['diagrams']
 
-    def create_diagram(self, id, label, nodes=None, edges=None):
-        diagram_data = {"id": id, "label": label, "nodes": nodes or [], "edges": edges or []}
+    def create_diagram(self, label, nodes=None, edges=None):
+        diagram_data = { "label": label, "nodes": nodes or [], "edges": edges or []}
         return self.collection.insert_one(diagram_data)
 
     def find_diagram_by_id(self, id):
-        return self.collection.find_one({"id": id})
+        diagram = self.collection.find_one({"_id": ObjectId(id)})
+        if diagram:
+            diagram['_id'] = str(diagram['_id'])
+            if 'members' in diagram:
+                user_ids = [str(member) for member in diagram['members']]
+                users = user_model.find_users_by_ids(user_ids)
+                diagram['members'] = users
+                diagram['members'] = [
+                    {'_id': str(member['_id']), 'image': member.get('image'), 'firstname': member.get('firstname'), 'lastname': member.get('lastname')}
+                    for member in users
+                ]
+        return diagram
+
+
+
+
+
+
+
+
+    
+    def find_diagram_by_member(self, user_id):
+        diagrams = list(self.collection.find({"members": {"$elemMatch": {"$eq": ObjectId(user_id)}}}, {"_id": 1, "label": 1}))
+        for diagram in diagrams:
+            diagram['_id'] = str(diagram['_id'])
+        return diagrams
+
+       
+
 
     def update_diagram(self, id, label=None, nodes=None, edges=None):
         update_data = {}

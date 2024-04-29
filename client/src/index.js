@@ -5,10 +5,13 @@ import App from "./App";
 
 // hooks
 import { AuthContextProvider } from "./context/AuthContext";
+import { EditorContextProvider } from "./context/EditorContext";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
 root.render(
   <AuthContextProvider>
-    <App />
+    <EditorContextProvider>
+      <App />
+    </EditorContextProvider>{" "}
   </AuthContextProvider>
 );

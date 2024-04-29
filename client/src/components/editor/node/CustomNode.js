@@ -21,7 +21,14 @@ const CustomNode = ({ data }) => {
 
   return (
     <div className="custom-node">
+      {" "}
+      {data.color && (
+        <div className="custom-node-color" style={{ background: data.color }}>
+          {" "}
+        </div>
+      )}{" "}
       <div className="custom-node-label">
+        {" "}
         {isEditing ? (
           <input
             type="text"
@@ -31,13 +38,13 @@ const CustomNode = ({ data }) => {
             autoFocus
           />
         ) : (
-          <p onDoubleClick={handleDoubleClick}>{data.label}</p>
-        )}
-      </div>
+          <p onDoubleClick={handleDoubleClick}> {data.label} </p>
+        )}{" "}
+      </div>{" "}
       {data.attributes.map((attribute) => {
         return <CustomAttribute key={attribute.id} data={attribute} />;
-      })}
-      {/* <div>adssda</div> */}
+      })}{" "}
+      {/* <div>adssda</div> */}{" "}
     </div>
   );
 };

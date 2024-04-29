@@ -1,0 +1,123 @@
+section aside {
+  position: absolute;
+  top: calc(3.8rem + 30px);
+  left: 1.5rem;
+  width: 300px;
+  min-width: 300px;
+  height: auto;
+  max-height: calc(100% - 10.5rem - 150px);
+  box-sizing: border-box;
+  background: var(--color_white);
+  box-shadow: var(--default-box-shadow);
+  z-index: 2;
+  border-radius: 1rem;
+  padding: 0.5rem 0;
+  box-sizing: border-box;
+}
+
+section aside .asideHeader {
+  display: flex;
+  justify-content: flex-start;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 0.5rem;
+  border-bottom: 1px solid var(--color_grey);
+}
+
+section aside .asideHeader img {
+  width: 20px;
+  height: 20px;
+}
+
+.menuPart {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+}
+
+.menuPart .menuPartHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem;
+  background: var(--color_white);
+}
+
+.menuPart .menuPartBody {
+  height: 0;
+  width: 100%;
+  oveflow: hidden;
+}
+
+.menuPart .menuPartBody_open {
+  height: auto;
+}
+
+.diagramElement {
+  box-sizing: border-box;
+  width: 100%;
+  border-top: 1px solid var(--color_grey);
+}
+
+.diagramElement .diagramListHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem;
+  background: var(--color_white);
+}
+
+.diagramElement .diagramListHeader div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.diagramElement .diagramListBody {
+  background: var(--color_light_grey);
+}
+
+.diagramElement .diagramListBody ul {
+  list-style: none;
+}
+
+.diagramElement .diagramListBody ul li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem;
+  border-top: 1px solid var(--color_grey);
+}
+
+/* .other-cursor {
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-top: 14px solid #32557f;
+  color: #32557f;
+  border-radius: 50%;
+  transform: rotate(35deg);
+} */
+
+.other-cursor {
+  position: relative;
+  color: #32557f;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.other-cursor::before {
+  top: 14px;
+  left: -14px;
+  content: "";
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  background: #32557f;
+  transform: rotate(45deg);
+}

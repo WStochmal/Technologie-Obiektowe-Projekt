@@ -44,8 +44,20 @@ def login():
     if not user or not user_model.validate_password(user, password):
         return jsonify({"message": "Nieprawidłowa nazwa użytkownika lub hasło", "error": "Unauthorized"}), 401
 
+    # Konwertuj ObjectId na string
+    user_id = str(user.get('_id'))
+
+    # Generuj token JWT
     token = jwt.encode({"email": email}, SECRET_KEY, algorithm='HS256')
-    response = jsonify({"token": token, "firstname": user.get('firstname'), "image": user.get('image')})
+    
+    # Twórz odpowiedź JSON
+    response_data = {
+        "token": token, 
+        "firstname": user.get('firstname'), 
+        "image": user.get('image'),
+        "_id": user_id
+    }
+    response = jsonify(response_data)
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response, 200
 

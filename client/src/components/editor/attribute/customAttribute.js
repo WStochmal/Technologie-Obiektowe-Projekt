@@ -53,10 +53,11 @@ const CustomAttribute = ({ data }) => {
         >
           {dataTypes.map((type, index) => (
             <option key={index} value={type}>
-              {type}
+              {" "}
+              {type}{" "}
             </option>
-          ))}
-        </select>
+          ))}{" "}
+        </select>{" "}
       </div>
     );
   };
@@ -78,8 +79,9 @@ const CustomAttribute = ({ data }) => {
       // }}
       // style={{ background: isSelected ? "red" : "transparent" }}
     >
-      <div className="custom-attribute-keyField"></div>
+      <div className="custom-attribute-keyField"> </div>{" "}
       <div className="custom-attribute-labelField">
+        {" "}
         {isEditing && label ? (
           <input
             type="text"
@@ -89,12 +91,13 @@ const CustomAttribute = ({ data }) => {
             autoFocus
           />
         ) : (
-          <p onDoubleClick={handleDoubleClick}>{label}</p>
-        )}
-      </div>
+          <p onDoubleClick={handleDoubleClick}> {label} </p>
+        )}{" "}
+      </div>{" "}
       <div className="custom-attribute-typeField">
-        {MySQLDataTypesSelect(data.type)}
-      </div>
+        {" "}
+        {MySQLDataTypesSelect(data.type)}{" "}
+      </div>{" "}
       <Handle
         position="right"
         style={{
@@ -106,7 +109,7 @@ const CustomAttribute = ({ data }) => {
         id={`${data.id}-handle`}
         type="source"
         isConnectable={true}
-      />
+      />{" "}
       <Handle
         position="left"
         style={{
@@ -118,7 +121,7 @@ const CustomAttribute = ({ data }) => {
         id={`${data.id}-handle`}
         type="source"
         isConnectable={true}
-      />
+      />{" "}
     </div>
   );
 };

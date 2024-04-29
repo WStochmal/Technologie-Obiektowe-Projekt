@@ -4,7 +4,7 @@ import { useContext } from "react";
 export const useEditorContext = () => {
   const context = useContext(EditorContext);
   if (!context) {
-    throw new Error("useModal must be used within a ModalProvider");
+    throw new Error("useEditorContext must be used within a EditorProvider");
   }
   return context;
 };

@@ -11,7 +11,7 @@ export const useLogin = () => {
   const { dispatch } = useAuthContext();
 
   const login = async (email, password) => {
-    setIsLoading(false);
+    setIsLoading(true);
     setError(false);
 
     try {
@@ -25,7 +25,7 @@ export const useLogin = () => {
       localStorage.setItem("user", JSON.stringify(response.data));
       setIsLoading(false);
       dispatch({ type: "LOGIN", payload: response.data });
-      navigate("/");
+      navigate("/workspace");
     } catch (error) {
       console.error("Request failed:", error.message);
 

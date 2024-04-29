@@ -1,4 +1,6 @@
 import hashlib
+from bson import ObjectId
+
 
 class User:
     def __init__(self, db):
@@ -11,6 +13,14 @@ class User:
 
     def find_user_by_email(self, email):
         return self.collection.find_one({"email": email})
+    
+    def find_user_by_id(self, id):
+        return self.collection.find_one({"_id": id})
+    
+    def find_users_by_ids(self,user_ids):
+        users = self.collection.find({"_id": {"$in": [ObjectId(user_id) for user_id in user_ids]}})
+        return list(users)
+
 
     def validate_password(self, user, password):
         hashed_password = user['password']
