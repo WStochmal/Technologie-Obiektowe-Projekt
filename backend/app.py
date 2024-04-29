@@ -47,6 +47,13 @@ def handle_cursor_move(data):
     # Prześlij ruch kursora do wszystkich klientów poza klientem, który wysłał ruch
     emit('otherCursorMove', {'userSid': request.sid, 'username': username, 'x': x, 'y': y}, broadcast=True, include_self=False)
 
+@app.route('/api/user/login', methods=['OPTIONS'])
+def handle_options_login():
+    response = jsonify({'message': 'Preflight request successful'})
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
+    response.headers.add('Access-Control-Allow-Methods', 'POST')
+    return response
 
 
 if __name__ == '__main__':

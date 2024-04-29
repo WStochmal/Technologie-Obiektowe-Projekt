@@ -4,8 +4,8 @@ form {
   flex-direction: column;
   justify-content: center;
   max-width: 300px;
-  padding: 0.5rem;
-  border-radius: 0.5rem;
+  padding: 1rem;
+  border-radius: 1rem;
   box-shadow: var(--default-box-shadow);
   gap: 0.5rem;
 }
@@ -20,6 +20,8 @@ form h1 {
   display: flex;
   position: relative;
   justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .inputContainer:last-child {

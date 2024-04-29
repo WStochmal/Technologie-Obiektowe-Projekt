@@ -8,20 +8,27 @@ export const useRegister = () => {
   const navigate = useNavigate();
   const [error, setError] = useState();
   const [isLoading, setIsLoading] = useState();
-
-  const register = async (firstname, lastname, username, password) => {
+  const [isSignedUp, setIsSignedUp] = useState();
+  const register = async (firstname, lastname, email, password, image) => {
     setIsLoading(true);
     setError(null);
 
     try {
-      const response = await axios.post("https://10.5.5.215:8000/", {
-        firstname,
-        lastname,
-        username,
-        password,
-      });
+      const response = await axios.post(
+        "http://127.0.0.1:5000/api/user/register",
+        {
+          firstname,
+          lastname,
+          email,
+          password,
+          image,
+        }
+      );
       setIsLoading(false);
-      navigate("/");
+      setTimeout(() => {
+        navigate("/auth/sign-in");
+        setIsSignedUp(false);
+      }, 250);
     } catch (error) {
       console.error("Request failed:", error.message);
       if (error.response) {
@@ -30,5 +37,5 @@ export const useRegister = () => {
     }
   };
 
-  return { register, error, isLoading };
+  return { register, error, isLoading, isSignedUp };
 };

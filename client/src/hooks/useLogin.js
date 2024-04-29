@@ -9,10 +9,13 @@ export const useLogin = () => {
   const [error, setError] = useState();
   const [isLoading, setIsLoading] = useState();
   const { dispatch } = useAuthContext();
+  const [isLogged, setIsLogged] = useState(false);
 
   const login = async (email, password) => {
     setIsLoading(true);
     setError(false);
+
+    console.log(process.env.REACT_APP_PROXY || "Proxy not set");
 
     try {
       const response = await axios.post(
@@ -25,7 +28,13 @@ export const useLogin = () => {
       localStorage.setItem("user", JSON.stringify(response.data));
       setIsLoading(false);
       dispatch({ type: "LOGIN", payload: response.data });
-      navigate("/workspace");
+
+      setIsLogged(true);
+
+      setTimeout(() => {
+        setIsLogged(false);
+        navigate("/workspace");
+      }, 250);
     } catch (error) {
       console.error("Request failed:", error.message);
 
@@ -41,5 +50,5 @@ export const useLogin = () => {
     }
   };
 
-  return { login, error, isLoading };
+  return { login, error, isLoading, isLogged };
 };

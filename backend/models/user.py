@@ -6,9 +6,9 @@ class User:
     def __init__(self, db):
         self.collection = db['users']
 
-    def create_user(self, firstname, lastname,image, email, password):
+    def create_user(self, firstname, lastname, email, password,image):
         hashed_password = hashlib.sha256(password.encode()).hexdigest()
-        user_data = {"firstname": firstname, "lastname": lastname, "email": email,image:image, "password": hashed_password}
+        user_data = {"firstname": firstname, "lastname": lastname, "email": email,"image":image, "password": hashed_password}
         return self.collection.insert_one(user_data)
 
     def find_user_by_email(self, email):

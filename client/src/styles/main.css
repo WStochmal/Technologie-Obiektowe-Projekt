@@ -150,6 +150,10 @@ div.content {
   max-width: 1400px;
   padding: 150px 0;
   box-sizing: border-box;
+  min-height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .generateBtn {

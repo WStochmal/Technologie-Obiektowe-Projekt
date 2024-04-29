@@ -23,13 +23,18 @@ def register():
     lastname = data['lastname']
     email = data['email']
     password = data['password']
+    image = data['image']
 
     existing_user = user_model.find_user_by_email(email)
     if existing_user:
         return jsonify({"message": "Użytkownik już istnieje"}), 400
 
-    user_model.create_user(firstname,lastname,email, password)
-    return jsonify({"message": "Użytkownik został zarejestrowany"}), 201
+    user_model.create_user(firstname,lastname,email, password,image)
+
+    response = jsonify({"message": "Użytkownik został zarejestrowany"})
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response, 201
+
 
 @user_controller.route('/login', methods=['POST'])
 def login():
@@ -38,11 +43,15 @@ def login():
     password = data.get('password')
 
     if not email or not password:
-        return jsonify({"message": "Nieprawidłowa nazwa użytkownika lub hasło", "error": "Unauthorized"}), 401
+        response = jsonify({"message": "Nieprawidłowa nazwa użytkownika lub hasło", "error": "Unauthorized"})
+        response.headers.add('Access-Control-Allow-Origin', '*')
+        return response, 401
 
     user = user_model.find_user_by_email(email)
     if not user or not user_model.validate_password(user, password):
-        return jsonify({"message": "Nieprawidłowa nazwa użytkownika lub hasło", "error": "Unauthorized"}), 401
+        response = jsonify({"message": "Nieprawidłowa nazwa użytkownika lub hasło", "error": "Unauthorized"})
+        response.headers.add('Access-Control-Allow-Origin', '*')
+        return response, 401
 
     # Konwertuj ObjectId na string
     user_id = str(user.get('_id'))
@@ -60,5 +69,3 @@ def login():
     response = jsonify(response_data)
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response, 200
-
-

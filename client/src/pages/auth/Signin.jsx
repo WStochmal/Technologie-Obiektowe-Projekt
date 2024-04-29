@@ -12,9 +12,9 @@ import icon_password from "../../assets/icons/password.png";
 import { useLogin } from "../../hooks/useLogin";
 import SpinnerLoader from "../../components/spinner-loader/Spinner-loader";
 
-const LoginPage = () => {
+const SigninPage = () => {
   const navigate = useNavigate();
-  const { login, error, isLoading } = useLogin();
+  const { login, error, isLoading, isLogged } = useLogin();
   const [auth, setAuth] = useState({
     email: "",
     password: "",
@@ -33,7 +33,7 @@ const LoginPage = () => {
   return (
     <div className="content">
       <form>
-        <h1>Log in</h1>
+        <h1>Sign in</h1>
         <span className="inputContainer">
           <img src={icon_user} alt="icon_user" />
           <input
@@ -59,21 +59,27 @@ const LoginPage = () => {
             onClick={handleSubmit}
             className="formSubmitBtn"
             style={{
-              background: error ? "var(--color_red)" : "var(--color_blue)",
+              background: error
+                ? "var(--color_red)"
+                : isLogged
+                ? "var(--color_green)"
+                : "var(--color_blue)",
             }}
           >
-            {isLoading && (
+            {isLoading && !error && !isLogged && (
               <SpinnerLoader
                 size={10}
                 borderSize={2}
                 color={"var(--color_white)"}
               />
             )}
-            {isLoading
-              ? "Logging in"
+            {isLoading && !error
+              ? "Signing in..."
               : error
               ? "Authorization rejected"
-              : "Log in"}
+              : isLogged
+              ? "Success! Redirecting..."
+              : "Sign in"}
           </button>
         </span>
         {error && (
@@ -87,7 +93,7 @@ const LoginPage = () => {
             <a
               className="hightlightText"
               onClick={() => {
-                navigate("/auth/register");
+                navigate("/auth/sign-up");
               }}
             >
               Sign up
@@ -99,4 +105,4 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default SigninPage;

@@ -16,13 +16,13 @@ import { useEditorContext } from "../../hooks/useEditorContext";
 import "../../styles/editor.css";
 import io from "socket.io-client";
 
-const socket = io("http://127.0.0.1:5000");
-
 function Editor() {
   const { id } = useParams();
   const { user } = useAuthContext();
   const { data, setData, activeMembers, setActiveMembers } = useEditorContext();
   const reactFlowWrapper = useRef(null); // Referencja do kontenera ReactFlow
+
+  const socket = io("http://127.0.0.1:5000");
 
   useEffect(() => {
     if (user) {
