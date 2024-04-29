@@ -37,7 +37,7 @@ class Diagram:
 
     
     def find_diagram_by_member(self, user_id):
-        diagrams = list(self.collection.find({"members": {"$elemMatch": {"$eq": ObjectId(user_id)}}}, {"_id": 1, "label": 1}))
+        diagrams = list(self.collection.find({"members": {"$elemMatch": {"$eq": ObjectId(user_id)}}}, {"_id": 1, "label": 1,"createdAt":1}))
         for diagram in diagrams:
             diagram['_id'] = str(diagram['_id'])
         return diagrams

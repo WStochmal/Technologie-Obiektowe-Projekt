@@ -8,6 +8,8 @@ import ReactFlow, {
   applyNodeChanges,
   applyEdgeChanges,
   MiniMap,
+  useNodesState,
+  useEdgesState,
 } from "reactflow";
 import "reactflow/dist/style.css";
 import CustomNode from "../../components/editor/node/CustomNode";
@@ -16,13 +18,19 @@ import { useEditorContext } from "../../hooks/useEditorContext";
 import "../../styles/editor.css";
 import io from "socket.io-client";
 
+const socket = io("http://127.0.0.1:5000");
+
 function Editor() {
   const { id } = useParams();
   const { user } = useAuthContext();
   const { data, setData, activeMembers, setActiveMembers } = useEditorContext();
   const reactFlowWrapper = useRef(null); // Referencja do kontenera ReactFlow
 
-  const socket = io("http://127.0.0.1:5000");
+  const [nodes, setNodes] = useNodesState(data?.diagram.nodes);
+
+  useEffect(() => {
+    setData(null);
+  }, []);
 
   useEffect(() => {
     if (user) {
@@ -65,28 +73,31 @@ function Editor() {
     }
   }, [user, data]);
 
-  useEffect(() => {
-    // Dodanie nasłuchiwania zdarzeń tylko po zamontowaniu komponentu
-    if (user) {
-      document.addEventListener("mousemove", handleMouseMove);
-      socket.on("otherCursorMove", handleOtherCursorMove);
-      socket.on("userLeftDiagram", handleUserLeftDiagram);
-    }
+  const handleNodeDrag = useCallback((event, node) => {
+    setData((prevData) => {
+      const nodes = prevData.diagram.nodes;
+      const updatedNodes = nodes.map((n) => {
+        if (n.id === node.id) {
+          return {
+            ...n,
+            position: {
+              x: node.position.x,
+              y: node.position.y,
+            },
+          };
+        }
+        return n;
+      });
 
-    return () => {
-      // Usunięcie nasłuchiwania zdarzeń po odmontowaniu komponentu
-      document.removeEventListener("mousemove", handleMouseMove);
-      socket.off("otherCursorMove", handleOtherCursorMove);
-      socket.off("userLeftDiagram", handleUserLeftDiagram);
-    };
-  }, [user]);
-
-  const handleUserLeftDiagram = ({ userSid }) => {
-    setActiveMembers((prevMembers) =>
-      prevMembers.filter((member) => member.userSid !== userSid)
-    );
-    removeCursorByUserSid(userSid);
-  };
+      return {
+        ...prevData,
+        diagram: {
+          ...prevData.diagram,
+          nodes: updatedNodes,
+        },
+      };
+    });
+  });
 
   const fetchData = async () => {
     try {
@@ -100,62 +111,28 @@ function Editor() {
     }
   };
 
-  const handleConnect = (params) => {};
-  const onNodesChange = useCallback((changes) => {});
-  const onEdgesChange = useCallback((changes) => {});
+  const handleConnect = (params) => {
+    console.log("Connect: ", params);
+    const { source, target } = params;
+    const edge = {
+      id: uuidv4(),
+      source: source,
+      target: target,
+    };
 
-  const handleMouseMove = (event) => {
-    if (user) {
-      const { clientX, clientY } = event;
-      const { width, height } =
-        reactFlowWrapper.current.getBoundingClientRect(); // Pobranie szerokości i wysokości kontenera ReactFlow
-      const x = clientX / width; // Przekształcenie pozycji X na jednostki procentowe
-      const y = clientY / height; // Przekształcenie pozycji Y na jednostki procentowe
-      const userInfo = {
-        x,
-        y,
-        username: user.firstname + " ",
+    setData((prevData) => {
+      const edges = prevData.diagram.edges;
+      const updatedEdges = [...edges, edge];
+
+      return {
+        ...prevData,
+        diagram: {
+          ...prevData.diagram,
+          edges: updatedEdges,
+        },
       };
-      socket.emit("cursorMove", userInfo);
-    }
+    });
   };
-
-  const handleOtherCursorMove = ({ userSid, username, x, y }) => {
-    renderOtherCursor(userSid, username, x, y);
-  };
-
-  const renderOtherCursor = (userSid, username, x, y) => {
-    const cursorElement = document.querySelector(
-      `.other-cursor[data-userSid="${userSid}"]`
-    );
-    if (cursorElement) {
-      cursorElement.style.left = `${x * 100}%`; // Przekształcenie pozycji X z powrotem na piksele
-      cursorElement.style.top = `${y * 100}%`; // Przekształcenie pozycji Y z powrotem na piksele
-    } else {
-      const cursor = document.createElement("div");
-      cursor.classList.add("other-cursor");
-      cursor.setAttribute("data-userSid", userSid);
-      cursor.innerText = username;
-      cursor.style.position = "absolute";
-      cursor.style.left = `${x * 100}%`;
-      cursor.style.top = `${y * 100}%`;
-      document.body.appendChild(cursor);
-    }
-  };
-
-  function removeCursorByUserSid(userSid) {
-    const cursorElements = document.querySelectorAll(
-      `.other-cursor[data-userSid="${userSid}"]`
-    );
-
-    // Sprawdź, czy znaleziono elementy pasujące do userSid
-    if (cursorElements.length > 0) {
-      cursorElements.forEach((element) => {
-        element.remove(); // Usuń znaleziony element z DOM
-      });
-    } else {
-    }
-  }
 
   return (
     <div style={{ height: "100%" }}>
@@ -163,12 +140,14 @@ function Editor() {
         <ReactFlow
           nodes={data?.diagram.nodes}
           edges={data?.diagram.edges}
-          onNodesChange={onNodesChange}
-          onEdgesChange={onEdgesChange}
+          // onNodesChange={onNodesChange}
+          // onEdgesChange={onEdgesChange}
+          onNodeDrag={handleNodeDrag}
           nodeTypes={{ customNode: CustomNode }}
           onConnect={handleConnect}
           fitView
           connectionMode="loose"
+
           // connectionLineComponent={CustomConnectionLine}
         >
           <Background />

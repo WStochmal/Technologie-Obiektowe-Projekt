@@ -31,7 +31,7 @@ const SigninPage = () => {
   };
 
   return (
-    <div className="content">
+    <div className="content contentFlex">
       <form>
         <h1>Sign in</h1>
         <span className="inputContainer">

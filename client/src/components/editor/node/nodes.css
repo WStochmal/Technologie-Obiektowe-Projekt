@@ -1,28 +1,29 @@
 .custom-node {
-  position: relative;
-  width: 260px;
-  background: white;
-  border-radius: 1rem;
-  box-shadow: var(--default-box-shadow);
-  padding: 1rem 0;
+    position: relative;
+    width: 240px;
+    background: white;
+    border-radius: 1rem;
+    box-shadow: var(--default-box-shadow);
+    background: var(--color_light_grey);
+    padding: 1rem 0;
 }
 
 .custom-node-label {
-  padding: 0.5rem;
-  box-sizing: border-box;
-  border-bottom: 1px solid var(--color_grey);
+    box-sizing: border-box;
+    border-bottom: 1px solid var(--color_grey);
 }
 
 .custom-node-label p {
-  text-align: center;
-  font-size: 18px;
+    text-align: center;
+    font-size: 18px;
+    padding: 0.25rem 0;
 }
 
 .custom-node-color {
-  border-radius: 1rem;
-  width: calc(100% - 2rem);
-  height: 15px;
-  left: 50%;
-  position: relative;
-  transform: translateX(-50%);
+    border-radius: 1rem;
+    width: calc(100% - 2rem);
+    height: 15px;
+    left: 50%;
+    position: relative;
+    transform: translateX(-50%);
 }

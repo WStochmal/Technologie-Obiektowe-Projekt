@@ -151,6 +151,9 @@ div.content {
   padding: 150px 0;
   box-sizing: border-box;
   min-height: 100%;
+}
+
+.contentFlex {
   display: flex;
   justify-content: center;
   align-items: center;

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { useAuthContext } from "../hooks/useAuthContext";
 import { useEditorContext } from "../hooks/useEditorContext";
@@ -16,16 +16,35 @@ import icon_diagram from "../assets/icons/diagram.png";
 import icon_close from "../assets/icons/close.png";
 import { useNavigate } from "react-router-dom";
 import { useLogout } from "../hooks/useLogout";
+import HeaderExport from "../components/header/Header-export";
+import HeaderImport from "../components/header/Header-import";
+import HeaderGenerate from "../components/header/Header-generate";
 
 const Header = ({ isOpen = false, onClick }) => {
-  const [isEditor, setIsEditor] = useState(true);
+  const [isEditor, setIsEditor] = useState(false);
   const [isProfileModalMenu, setIsProfileModalMenu] = useState(false);
+  const [isExportModalMenu, setIsExportModalMenu] = useState(false);
+  const [isGenerateModalMenu, setIsGenerateModalMenu] = useState(false);
+  const [isShareModalMenu, setIsShareModalMenu] = useState(false);
 
   const { user } = useAuthContext();
 
   const { logout } = useLogout();
   const { data, setData, activeMembers } = useEditorContext();
   const navigate = useNavigate();
+
+  function isEditorUrl() {
+    const currentUrl = window.location.href;
+    return currentUrl.includes("/editor/");
+  }
+
+  useEffect(() => {
+    if (isEditorUrl()) {
+      setIsEditor(true);
+    } else {
+      setIsEditor(false);
+    }
+  }, [window.location.href]);
   return (
     <header>
       <div className="headerPart">
@@ -66,24 +85,9 @@ const Header = ({ isOpen = false, onClick }) => {
                 >
                   {data && data.label}
                 </p>{" "}
-                <button className="defaultBtn">
-                  {" "}
-                  <img
-                    src={icon_export}
-                    alt="icon_export"
-                    className="headerIcon"
-                  />
-                  <p>Export</p>
-                </button>{" "}
-                <button className="defaultBtn generateBtn">
-                  {" "}
-                  <img
-                    src={icon_generate}
-                    alt="icon_generate"
-                    className="headerIcon"
-                  />
-                  <p>Generate</p>
-                </button>{" "}
+                <HeaderImport />
+                <HeaderExport />
+                <HeaderGenerate />
                 <p
                   style={{
                     borderLeft: "1px solid var(--color_grey)",
@@ -128,7 +132,7 @@ const Header = ({ isOpen = false, onClick }) => {
             <button
               className="defaultBtn"
               onClick={() => {
-                navigate("/auth/sing-in");
+                navigate("/auth/sign-in");
               }}
             >
               {" "}

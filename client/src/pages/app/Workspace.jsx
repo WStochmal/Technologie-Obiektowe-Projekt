@@ -4,6 +4,7 @@ import axios from "axios";
 
 import "../../styles/workspace.css";
 import { useNavigate } from "react-router-dom";
+import { formatDateString } from "../../utils/functions";
 
 const WorkspacePage = () => {
   const [diagrams, setDiagrams] = useState([]);
@@ -31,6 +32,7 @@ const WorkspacePage = () => {
         }
       );
       setDiagrams(response.data);
+      console.log(response.data);
     } catch (error) {
       console.log(error);
     }
@@ -51,7 +53,13 @@ const WorkspacePage = () => {
                   naviagte(`/editor/${diagram._id}`);
                 }}
               >
-                <p>{diagram.label}</p>
+                <div className="diagramPreview"></div>
+                <div className="diagramInfo">
+                  <p>{diagram.label}</p>
+                  <p className="greyText">
+                    {formatDateString(diagram.createdAt, true)}
+                  </p>
+                </div>
               </div>
             );
           })}

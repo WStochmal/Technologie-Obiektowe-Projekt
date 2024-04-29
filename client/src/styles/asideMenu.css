@@ -1,96 +1,124 @@
 section aside {
-  position: absolute;
-  top: calc(3.8rem + 30px);
-  left: 1.5rem;
-  width: 300px;
-  min-width: 300px;
-  height: auto;
-  max-height: calc(100% - 10.5rem - 150px);
-  box-sizing: border-box;
-  background: var(--color_white);
-  box-shadow: var(--default-box-shadow);
-  z-index: 2;
-  border-radius: 1rem;
-  padding: 0.5rem 0;
-  box-sizing: border-box;
+    position: absolute;
+    top: calc(3.8rem + 30px);
+    left: 1.5rem;
+    width: 350px;
+    min-width: 350px;
+    height: auto;
+    max-height: calc(100% - 10.5rem - 150px);
+    box-sizing: border-box;
+    background: var(--color_white);
+    box-shadow: var(--default-box-shadow);
+    z-index: 2;
+    border-radius: 1rem;
+    padding: 0.5rem 0;
+    box-sizing: border-box;
+    overflow-y: scroll;
 }
 
 section aside .asideHeader {
-  display: flex;
-  justify-content: flex-start;
-  gap: 0.5rem;
-  align-items: center;
-  padding: 0.5rem;
-  border-bottom: 1px solid var(--color_grey);
+    display: flex;
+    justify-content: flex-start;
+    gap: 0.5rem;
+    align-items: center;
+    padding: 0.5rem;
+    border-bottom: 1px solid var(--color_grey);
 }
 
 section aside .asideHeader img {
-  width: 20px;
-  height: 20px;
+    width: 20px;
+    height: 20px;
 }
 
 .menuPart {
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  width: 100%;
-  height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
 }
 
 .menuPart .menuPartHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.5rem;
-  background: var(--color_white);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem;
+    background: var(--color_white);
 }
 
 .menuPart .menuPartBody {
-  height: 0;
-  width: 100%;
-  oveflow: hidden;
+    height: 0;
+    width: 100%;
+    oveflow: hidden;
 }
 
 .menuPart .menuPartBody_open {
-  height: auto;
+    height: auto;
 }
 
 .diagramElement {
-  box-sizing: border-box;
-  width: 100%;
-  border-top: 1px solid var(--color_grey);
+    box-sizing: border-box;
+    width: 100%;
+    border-top: 1px solid var(--color_grey);
 }
 
 .diagramElement .diagramListHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.5rem;
-  background: var(--color_white);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem;
+    background: var(--color_white);
 }
 
 .diagramElement .diagramListHeader div {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 0.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
 }
 
 .diagramElement .diagramListBody {
-  background: var(--color_light_grey);
+    background: var(--color_light_grey);
 }
 
 .diagramElement .diagramListBody ul {
-  list-style: none;
+    list-style: none;
 }
 
 .diagramElement .diagramListBody ul li {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.5rem;
-  border-top: 1px solid var(--color_grey);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem;
+    border-top: 1px solid var(--color_grey);
+    box-sizing: border-box;
+    max-width: 100%;
 }
+
+.diagramElement .diagramListBody ul li span {
+    white-space: nowrap;
+    margin-right: 0.5rem;
+    border-right: 1px solid var(--color_grey);
+    padding-right: 0.5rem;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+.diagramElement .diagramListBody ul li span:last-child {
+    padding-right: 0;
+    margin-right: 0;
+    border-right: 0;
+}
+
+.diagramElement .diagramListBody ul li span input {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.diagramElement .diagramListBody ul li span:last-of-type {
+    width: 40%;
+}
+
 
 /* .other-cursor {
   position: absolute;
@@ -105,19 +133,55 @@ section aside .asideHeader img {
 } */
 
 .other-cursor {
-  position: relative;
-  color: #32557f;
-  font-size: 12px;
-  font-weight: 600;
+    position: relative;
+    color: #32557f;
+    font-size: 12px;
+    font-weight: 600;
 }
 
 .other-cursor::before {
-  top: 14px;
-  left: -14px;
-  content: "";
-  position: absolute;
-  width: 14px;
-  height: 14px;
-  background: #32557f;
-  transform: rotate(45deg);
+    top: 14px;
+    left: -14px;
+    content: "";
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    background: #32557f;
+    transform: rotate(45deg);
+}
+
+.memberElement {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.25rem 0.5rem;
+    box-sizing: ;
+}
+
+.memberElement .avatar::before {
+    content: "";
+    width: 10px;
+    height: 10px;
+    position: absolute;
+    background: var(--color_grey);
+    border: 2px solid var(--color_grey);
+    left: -5px;
+    bottom: -3px;
+    z-index: 2;
+    border-radius: 50%;
+}
+
+.memberElement .avatar.active::before {
+    background: var(--color_green);
+}
+
+.removeBtn {
+    /* padding: 0.25rem; */
+    box-sizing: border-box;
+}
+
+.removeBtn img {
+    width: 18px;
+    height: 18px;
 }

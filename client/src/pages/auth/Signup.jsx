@@ -52,7 +52,7 @@ const SignupPage = () => {
   };
 
   return (
-    <div className="content">
+    <div className="content contentFlex">
       <form>
         <h1>Sign up</h1>
         <span className="inputContainer">
