@@ -7,6 +7,7 @@ export const authReducer = (state, action) => {
     case "LOGIN":
       return { user: action.payload };
     case "LOGOUT":
+      localStorage.removeItem("user");
       return { user: null };
     default:
       return state;
