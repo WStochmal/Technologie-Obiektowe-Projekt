@@ -160,7 +160,7 @@ const AsideMenu = () => {
           const newAttributes = [
             ...node.data.attributes,
             {
-              id: node.data.attributes.length + 1,
+              id: uuidv4(),
               label: "New Attribute",
               type: "INT",
             },
