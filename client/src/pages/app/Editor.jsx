@@ -1,4 +1,7 @@
-import { useState, useCallback, useEffect, useRef } from "react";
+// libraries
+import html2canvas from "html2canvas";
+import io from "socket.io-client";
+import { useState, useCallback, useEffect, useRef, useMemo } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
@@ -11,72 +14,136 @@ import ReactFlow, {
   useNodesState,
   useEdgesState,
   MarkerType,
+  useReactFlow,
+  ReactFlowProvider,
 } from "reactflow";
+
+// styles
+import "../../styles/editor.css";
 import "reactflow/dist/style.css";
-import CustomNode from "../../components/editor/node/CustomNode";
+
+// hooks
+import { useModalWindowContext } from "../../hooks/useModalWindowContext";
 import { useAuthContext } from "../../hooks/useAuthContext";
 import { useEditorContext } from "../../hooks/useEditorContext";
-import "../../styles/editor.css";
-import io from "socket.io-client";
-import html2canvas from "html2canvas";
 
-const socket = io("http://127.0.0.1:5000");
+// components
+import CustomNode from "../../components/editor/node/CustomNode";
+import Loader from "../../common/loader/Loader";
+import EditorListAttributesWindow from "../../components/editor/main-views/EditorListAttributesWindow";
+
+// context
+import { ControlContextProvider } from "../../context/ControlContext";
+
+// svg
+import Connections from "../../assets/svg/Connections";
 
 function Editor() {
   const { id } = useParams();
-  const { user } = useAuthContext();
-  const { data, setData, activeMembers, setActiveMembers } = useEditorContext();
+  const [isLoading, setIsLoading] = useState(true);
+  const { user, socket } = useAuthContext();
+  const { data, setData, activeMembers, setActiveMembers, selectedNodeId } =
+    useEditorContext();
+  const { openModal } = useModalWindowContext();
   const reactFlowRef = useRef(null);
   const [isUserEmitted, setIsUserEmitted] = useState(false);
+  const [isResizing, setIsResizing] = useState(false);
+  const [leftPanelWidth, setLeftPanelWidth] = useState("50%");
+  const [rightPanelWidth, setRightPanelWidth] = useState("50%");
+  const { setViewport } = useReactFlow();
+
+  const [isMapVisible, setIsMapVisible] = useState(false);
+  const [isControlsVisible, setIsControlsVisible] = useState(false);
+  const nodeTypes = useMemo(() => ({ customNode: CustomNode }), []);
+
   const reactFlowWrapper = useRef(null); // Referencja do kontenera ReactFlow
 
   const [nodes, setNodes] = useNodesState(data?.diagram.nodes);
+
+  const [displayFullData, setDisplayFullData] = useState(false);
 
   useEffect(() => {
     setData(null);
   }, []);
 
   useEffect(() => {
+    setIsLoading(true);
     if (user) {
       fetchData();
     }
   }, [user]);
 
   useEffect(() => {
-    const joinDiagram = () => {
-      if (user && socket.connected) {
-        const userId = user._id;
-        console.log("User id: ", userId);
-        socket.emit("joinDiagram", { userId });
-      }
-    };
+    if (socket) {
+      const joinDiagram = () => {
+        if (user && socket.connected) {
+          const userId = user._id;
+          socket.emit("joinDiagram", { userId });
+        }
+      };
 
-    const handleJoinDiagram = ({ userId, userSid }) => {
-      console.log("User joined diagram");
-      if (data && data.members && data.members.length > 0) {
-        const user = data.members.find((member) => member._id === userId);
-        if (user) {
-          user.userSid = userSid;
-          console.log("User: ", user);
-          setActiveMembers((prevMembers) => [...prevMembers, user]);
+      const handleJoinDiagram = ({ userId, userSid }) => {
+        console.log("User joined diagram");
+        if (data && data.members && data.members.length > 0) {
+          const user = data.members.find((member) => member._id === userId);
+          if (user) {
+            user.userSid = userSid;
+            setActiveMembers((prevMembers) => [...prevMembers, user]);
+          }
+        }
+      };
+      if (user && data) {
+        if (isUserEmitted === false) {
+          setIsUserEmitted(true);
+          joinDiagram();
         }
       }
-    };
-
-    if (user && data) {
-      if (isUserEmitted === false) {
-        console.log("LOG 2");
-        setIsUserEmitted(true);
-        joinDiagram();
+      if (socket) {
       }
+      socket.on("userJoinedDiagram", handleJoinDiagram);
+
+      return () => {
+        socket.off("userJoinedDiagram", handleJoinDiagram);
+      };
     }
-    socket.on("userJoinedDiagram", handleJoinDiagram);
-    return () => {
-      socket.off("userJoinedDiagram", handleJoinDiagram);
-    };
-  }, [user, data]);
+  }, [user, data, socket]);
 
   const handleNodeDrag = useCallback((event, node) => {
+    console.log("Emitted node drag: ", node);
+
+    const dataToSend = {
+      id: id,
+      node: node,
+    };
+    socket.emit("nodeDrag", dataToSend);
+    setData((prevData) => {
+      const nodes = prevData.diagram.nodes;
+      const updatedNodes = nodes.map((n) => {
+        if (n.id === node.id) {
+          return {
+            ...n,
+            position: {
+              x: node.position.x,
+              y: node.position.y,
+            },
+          };
+        }
+        return n;
+      });
+
+      return {
+        ...prevData,
+        diagram: {
+          ...prevData.diagram,
+          nodes: updatedNodes,
+        },
+      };
+    });
+  });
+
+  const handleSocketNodeDrag = useCallback((node) => {
+    console.log("Socket on: ", node);
+
     setData((prevData) => {
       const nodes = prevData.diagram.nodes;
       const updatedNodes = nodes.map((n) => {
@@ -108,7 +175,7 @@ function Editor() {
         `http://127.0.0.1:5000/api/diagram/get/${id}`
       );
       setData(response.data);
-      console.log(response.data);
+      setIsLoading(false);
     } catch (error) {
       console.log(error);
     }
@@ -125,25 +192,18 @@ function Editor() {
   };
 
   const handleConnect = (params) => {
-    console.log(data);
-    console.log("Connect: ", params);
-    console.log(data);
-    const { source, target, sourceHandle, targetHandle } = params;
-    const id = uuidv4();
-    const edge = {
-      id: id,
-      source: source,
-      target: target,
-      sourceHandle: sourceHandle,
-      targetHandle: targetHandle,
-      type: "smoothstep",
-    };
+    openModal("ConnectionModal", params);
+  };
 
-    console.log("Edge: ", edge);
-
+  const handleConnectionRemove = (params) => {
+    console.log("Remove connection: ", params[0]);
+    const { id } = params[0];
+    console.log(id);
     setData((prevData) => {
       const edges = prevData.diagram.edges;
-      const updatedEdges = [...edges, edge];
+      const updatedEdges = edges.filter((edge) => edge.id !== id);
+      console.log(edges);
+      console.log(updatedEdges);
 
       return {
         ...prevData,
@@ -155,45 +215,27 @@ function Editor() {
     });
   };
 
-  const takeScreenshot = () => {
-    if (reactFlowRef.current) {
-      html2canvas(reactFlowRef.current).then((canvas) => {
-        // Uzyskano zrzut ekranu jako obiekt canvas
-        // Tutaj można go wykorzystać dalej, np. zapisać go jako plik PNG
-        canvas.toBlob((blob) => {
-          // Tworzenie obiektu URL z bloba
-          const url = URL.createObjectURL(blob);
-
-          // Tworzenie linku do pobrania
-          const link = document.createElement("a");
-          link.href = url;
-          link.download = "screenshot.png";
-
-          // Kliknięcie linku w celu pobrania
-          link.click();
-
-          // Zwolnienie zasobów URL po pobraniu
-          URL.revokeObjectURL(url);
-        }, "image/png");
-      });
-    }
-  };
-
   useEffect(() => {
-    // Dodanie nasłuchiwania zdarzeń tylko po zamontowaniu komponentu
-    if (user) {
-      document.addEventListener("mousemove", handleMouseMove);
-      socket.on("otherCursorMove", handleOtherCursorMove);
-      socket.on("userLeftDiagram", handleUserLeftDiagram);
-    }
+    if (socket) {
+      // Dodanie nasłuchiwania zdarzeń tylko po zamontowaniu komponentu
+      if (user) {
+        document.addEventListener("mousemove", handleMouseMove);
+        socket.on("otherCursorMove", handleOtherCursorMove);
+        socket.on("userLeftDiagram", handleUserLeftDiagram);
+        socket.on("nodeDragged", (data) => {
+          handleSocketNodeDrag(data.node);
+        });
+      }
 
-    return () => {
-      // Usunięcie nasłuchiwania zdarzeń po odmontowaniu komponentu
-      document.removeEventListener("mousemove", handleMouseMove);
-      socket.off("otherCursorMove", handleOtherCursorMove);
-      socket.off("userLeftDiagram", handleUserLeftDiagram);
-    };
-  }, [user]);
+      return () => {
+        // Usunięcie nasłuchiwania zdarzeń po odmontowaniu komponentu
+        document.removeEventListener("mousemove", handleMouseMove);
+        socket.off("otherCursorMove", handleOtherCursorMove);
+        socket.off("userLeftDiagram", handleUserLeftDiagram);
+        socket.off("nodeDragged", handleSocketNodeDrag);
+      };
+    }
+  }, [user, socket]);
 
   const handleUserLeftDiagram = ({ userSid }) => {
     setActiveMembers((prevMembers) =>
@@ -240,7 +282,7 @@ function Editor() {
   }
 
   const handleMouseMove = (event) => {
-    if (user) {
+    if (user && socket && !isLoading) {
       const { clientX, clientY } = event;
       const { width, height } =
         reactFlowWrapper.current.getBoundingClientRect(); // Pobranie szerokości i wysokości kontenera ReactFlow
@@ -255,83 +297,114 @@ function Editor() {
     }
   };
 
-  return (
-    <div style={{ height: "100%" }}>
-      <button
-        style={{ position: "absolute", zIndex: "10000" }}
-        onClick={takeScreenshot}
-      >
-        Take screenshot
-      </button>
-      <div ref={reactFlowWrapper} style={{ height: "100%" }}>
-        <svg style={{ position: "absolute", top: 0, left: 0 }}>
-          <defs>
-            <marker
-              id="symbol-1"
-              viewBox="0 0 40 40"
-              markerHeight={40}
-              markerWidth={40}
-              refX={-5}
-              refY={5}
-            >
-              <path
-                d="M0,0 L0,10"
-                stroke="#b2b2b4"
-                strokeWidth="2"
-                fill="white"
-              />
-            </marker>
-            <marker
-              id="symbol-n"
-              viewBox="-1 -1 40 40"
-              markerHeight={40}
-              markerWidth={40}
-              refX="0" // Przesunięcie od końca krawędzi, aby strzałka była umieszczona na linii
-              refY="5" // Przesunięcie w pionie, aby strzałka była umieszczona na linii
-              orient="auto-start" // Automatyczna orientacja strzałki wzdłuż krawędzi
-            >
-              {/* Lewa skośna linia strzałki */}
-              <line
-                x1="0"
-                y1="0"
-                x2="10"
-                y2="5"
-                stroke="#b2b2b4"
-                strokeWidth="1"
-              />
-              {/* Prawa skośna linia strzałki */}
-              <line
-                x1=""
-                y1="10"
-                x2="10"
-                y2="5"
-                stroke="#b2b2b4"
-                strokeWidth="1"
-              />
-            </marker>
-          </defs>
-        </svg>
-        <ReactFlow
-          ref={reactFlowRef}
-          nodes={data?.diagram.nodes}
-          edges={data?.diagram.edges}
-          // onNodesChange={onNodesChange}
-          // onEdgesChange={onEdgesChange}
-          onNodeDrag={handleNodeDrag}
-          nodeTypes={{ customNode: CustomNode }}
-          onConnect={handleConnect}
-          fitView
-          connectionMode="loose"
+  const handleNodeRemove = async (params) => {
+    if (socket) {
+      socket.emit("nodeRemove", { node: params[0], diagramId: data._id });
+    }
+  };
+  const handleMouseDown = (e) => {
+    e.preventDefault();
+    setIsResizing(true);
+    document.addEventListener("mousemove", handleMouseMovz);
+    document.addEventListener("mouseup", handleMouseUp);
 
-          // connectionLineComponent={CustomConnectionLine}
+    console.log("Mouse down");
+  };
+
+  const handleMouseMovz = (e) => {
+    const containerWidth = document.getElementById("editorWindow").offsetWidth;
+    const newRightPanelWidth = containerWidth - e.clientX;
+    setLeftPanelWidth(`${e.clientX}px`);
+    setRightPanelWidth(`${newRightPanelWidth}px`);
+  };
+
+  const handleMouseUp = () => {
+    setIsResizing(false);
+    document.removeEventListener("mousemove", handleMouseMovz);
+    document.removeEventListener("mouseup", handleMouseUp);
+  };
+
+  useEffect(() => {
+    if (data) {
+      console.log(selectedNodeId);
+      const selectedNode = data?.diagram.nodes.find(
+        (node) => node.data.label === selectedNodeId
+      );
+      if (selectedNode) {
+        setViewport(
+          { x: selectedNode.position.x, y: selectedNode.position.y, zoom: 1 },
+          { duration: 800 }
+        );
+      }
+    }
+  }, [selectedNodeId]);
+
+  // const handleTransform = useCallback(() => {
+  //   setViewport({ x: 0, y: 0, zoom: 1 }, { duration: 800 });
+  // }, [setViewport]);
+
+  return (
+    <div id="editorWindow">
+      {parseInt(leftPanelWidth) > 150 && (
+        <div
+          className="editorPanel"
+          id="editorLeftPanel"
+          style={{
+            width: leftPanelWidth,
+            flex: parseInt(leftPanelWidth) <= 150 ? "none" : 1,
+          }}
         >
-          <Background />
-          <Controls />
-          <MiniMap />
-        </ReactFlow>
-      </div>
+          <ControlContextProvider>
+            <div style={{ height: "100%", width: "100%" }}>
+              {isLoading && <Loader />}
+              {!isLoading && (
+                <div ref={reactFlowWrapper} style={{ height: "100%" }}>
+                  <Connections />
+                  <ReactFlow
+                    ref={reactFlowRef}
+                    nodes={data?.diagram.nodes}
+                    edges={data?.diagram.edges}
+                    // onNodesChange={onNodesChange}
+                    // onEdgesChange={onEdgesChange}
+                    onNodeDrag={handleNodeDrag}
+                    onNodesDelete={handleNodeRemove}
+                    onEdgesDelete={handleConnectionRemove}
+                    nodeTypes={nodeTypes}
+                    onConnect={handleConnect}
+                    // fitView
+                    connectionMode="loose"
+                  >
+                    <Background />
+                    {isMapVisible && <MiniMap />}
+                    {isControlsVisible && <Controls />}
+                  </ReactFlow>
+                </div>
+              )}
+            </div>
+          </ControlContextProvider>
+        </div>
+      )}
+      <div id="separator" onMouseDown={handleMouseDown}></div>
+      {parseInt(rightPanelWidth) > 150 && (
+        <div
+          className="editorPanel"
+          id="editorRightPanel"
+          style={{
+            width: rightPanelWidth,
+            flex: parseInt(leftPanelWidth) <= 150 ? 1 : "none",
+          }}
+        >
+          <EditorListAttributesWindow />
+        </div>
+      )}
     </div>
   );
 }
 
-export default Editor;
+// export default Editor;
+
+export default () => (
+  <ReactFlowProvider>
+    <Editor />
+  </ReactFlowProvider>
+);

@@ -45,11 +45,6 @@ section {
   position: relative;
 }
 
-section div#editor {
-  width: 100%;
-  height: 100%;
-}
-
 section div#diagramsList {
   width: 300px;
   min-width: 300px;

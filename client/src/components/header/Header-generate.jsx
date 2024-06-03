@@ -6,16 +6,19 @@ import { useState } from "react";
 import icon_generate from "../../assets/icons/generate.png";
 
 import icon_sql from "../../assets/icons/sql.png";
+import { useModalWindowContext } from "../../hooks/useModalWindowContext";
 
 const HeaderGenerate = () => {
   const [isModalMenu, setIsShareModalMenu] = useState(false);
+
+  const { openModal } = useModalWindowContext();
 
   return (
     <div className="buttonContainer">
       <button
         className="defaultBtn generateBtn"
         onClick={() => {
-          setIsShareModalMenu(!isModalMenu);
+          openModal("GenerateModal");
         }}
       >
         {" "}

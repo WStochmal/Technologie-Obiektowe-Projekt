@@ -1,6 +1,8 @@
 from bson import ObjectId
 from models.user import User
 from database import Database
+from datetime import datetime
+from bson import ObjectId
 
 db = Database().get_db()
 user_model = User(db)
@@ -10,8 +12,8 @@ class Diagram:
     def __init__(self, db):
         self.collection = db['diagrams']
 
-    def create_diagram(self, label, nodes=None, edges=None):
-        diagram_data = { "label": label, "nodes": nodes or [], "edges": edges or []}
+    def create_diagram(self, userId, label, nodes=None, edges=None):
+        diagram_data = {"members": [ObjectId(userId)], "label": label, "diagram": {"nodes": nodes or [], "edges": edges or []}, "createdAt": datetime.utcnow()}
         return self.collection.insert_one(diagram_data)
 
     def find_diagram_by_id(self, id):
@@ -28,23 +30,14 @@ class Diagram:
                 ]
         return diagram
 
-
-
-
-
-
-
-
     
     def find_diagram_by_member(self, user_id):
-        diagrams = list(self.collection.find({"members": {"$elemMatch": {"$eq": ObjectId(user_id)}}}, {"_id": 1, "label": 1,"createdAt":1}))
+        diagrams = list(self.collection.find({"members": {"$elemMatch": {"$eq": ObjectId(user_id)}}}, {"_id": 1, "label": 1,"label": 1,"diagram":1,"createdAt":1}))
         for diagram in diagrams:
             diagram['_id'] = str(diagram['_id'])
         return diagrams
 
        
-
-
     def update_diagram(self, id, label=None, nodes=None, edges=None):
         update_data = {}
         if label is not None:
@@ -56,4 +49,4 @@ class Diagram:
         return self.collection.update_one({"id": id}, {"$set": update_data})
 
     def delete_diagram(self, id):
-        return self.collection.delete_one({"id": id})
+        return self.collection.delete_one({"_id": ObjectId(id)})

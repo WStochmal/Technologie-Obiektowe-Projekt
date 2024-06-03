@@ -1,0 +1,36 @@
+.loader-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+
+.loader {
+    border: 4px solid #f3f3f3;
+    /* Kolor obramowania */
+    border-top: 4px solid #06b;
+    /* Kolor górnej krawędzi */
+    border-radius: 50%;
+    /* Okrągły kształt */
+    width: 30px;
+    /* Szerokość */
+    height: 30px;
+    /* Wysokość */
+    animation: spin 1s linear infinite;
+    /* Animacja */
+    margin: auto;
+    /* Centrowanie */
+}
+
+
+/* Animacja obrotu */
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}

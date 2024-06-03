@@ -1,0 +1,101 @@
+.connection-container {
+  display: flex;
+  padding: 0.5rem;
+}
+
+.connection-container span {
+  width: 50%;
+}
+
+.generate-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.generate-container-uri {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+  border-bottom: 1px solid var(--color_grey);
+  padding: 0.5rem;
+  position: relative;
+}
+
+.generate-container-uri input {
+  width: 100%;
+  padding: 0.5rem 0.5rem 0.5rem calc(1rem + 20px);
+  border-radius: 0.5rem;
+  border: none;
+  border: 1px solid var(--color_grey);
+  background: var(--color_light_grey);
+}
+
+.query-object {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  gap: 0.5rem;
+  padding: 0.15rem 0.5rem;
+  box-sizing: border-box;
+}
+
+.query-status-type {
+  width: 16px;
+  height: 16px;
+  border: 1px solid var(--color_grey);
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
+}
+
+.query-status-type img {
+  width: 80%;
+  height: 80%;
+  filter: invert(1);
+}
+
+.connection-status-type {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  border: 1px solid var(--color_grey);
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.connection-status-type img {
+  width: 80%;
+  height: 80%;
+  filter: invert(1);
+}
+
+.generate-container-uri-error {
+  padding: 0.5rem;
+}
+
+.consoleText {
+  font-size: 12px;
+}
+
+.query-object-name {
+  font-size: 12px;
+}
+
+.queries-list {
+  width: 40%;
+  padding: 0.5rem;
+  overflow-y: auto;
+}
+
+.queries-list-console {
+  width: 60%;
+  padding: 0.5rem;
+  overflow-y: auto;
+}

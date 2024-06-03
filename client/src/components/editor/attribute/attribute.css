@@ -10,8 +10,29 @@
 }
 
 .custom-attribute p {
-    max-width: 50%;
+    max-width: 100%;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+.custom-attribute-mainLine {
+    display: flex;
+    width: auto;
+    gap: 0.5rem;
+    align-items: center;
+    min-width: 50%;
+}
+
+.custom-attribute-secondLine {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 50%;
+}
+
+.custom-attribute-params {
+    display: flex;
+    align-items: center;
+    gap: 0.1rem;
 }

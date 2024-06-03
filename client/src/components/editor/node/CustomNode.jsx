@@ -1,17 +1,28 @@
-// CustomNode.js
+// libraries
 import React, { useState } from "react";
 import ReactFlow, { Handle } from "reactflow";
 
+// components
 import CustomAttribute from "../attribute/customAttribute";
 
+// style
 import "./nodes.css";
 
+// hooks
+import { useControlContext } from "../../../hooks/useControlContext";
+import { useEditorContext } from "../../../hooks/useEditorContext";
+
 const CustomNode = ({ data }) => {
+  console.log(data);
   const [isActive, setIsActive] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
 
+  const { isEditMode } = useControlContext();
+  const { setSelectedNodeId, selectedNodeId } = useEditorContext();
+
   const handleClick = () => {
-    setIsActive(!isActive); // Przełączamy stan aktywności węzła po kliknięciu
+    setIsActive(!isActive);
+    setSelectedNodeId(data.label); // Przełączamy stan aktywności węzła po kliknięciu
   };
 
   const handleDragStart = () => {
@@ -30,6 +41,7 @@ const CustomNode = ({ data }) => {
       onClick={handleClick}
       onMouseDown={handleDragStart}
       onMouseUp={handleDragStop}
+      style={{ width: isEditMode ? "280px" : "240px" }}
     >
       {data.color && (
         <div
@@ -41,7 +53,7 @@ const CustomNode = ({ data }) => {
         <p> {data.label} </p>{" "}
       </div>{" "}
       {data.attributes.map((attribute) => {
-        return <CustomAttribute key={attribute.id} data={attribute} />;
+        return <CustomAttribute key={attribute.id} dataAttr={attribute} />;
       })}{" "}
     </div>
   );

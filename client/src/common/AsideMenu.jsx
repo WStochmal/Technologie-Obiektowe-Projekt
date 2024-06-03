@@ -7,12 +7,17 @@ import { v4 as uuidv4 } from "uuid";
 import "../styles/asideMenu.css";
 
 // icons
-
 import icon_diagram from "../assets/icons/diagram.png";
 import icon_delete from "../assets/icons/delete.png";
 
+// hooks
+import { useAuthContext } from "../hooks/useAuthContext";
+import NotNull from "../assets/svg/NotNull";
+import Unique from "../assets/svg/Unique";
+
 const AsideMenu = () => {
   const [selectedNodeId, setSelectedNodeId] = useState(null);
+  const { user, socket } = useAuthContext();
 
   const { data, setData, activeMembers } = useEditorContext();
 
@@ -185,32 +190,46 @@ const AsideMenu = () => {
       };
     });
   };
-
-  const handleDiagramAdd = () => {
-    setData((prevData) => {
-      return {
-        ...prevData,
-        diagram: {
-          ...prevData.diagram,
-          nodes: [
-            ...prevData.diagram.nodes,
+  // Handle adding a new node to the diagram
+  const handleNodeAdd = () => {
+    if (socket) {
+      const uuid = uuidv4().replace(/-/g, "");
+      const newNode = {
+        id: uuidv4(),
+        data: {
+          label: "New Node",
+          color: "#06b",
+          attributes: [
             {
-              id: uuidv4(),
-              data: {
-                label: "New Node",
-                color: "#06b",
-                attributes: [],
-              },
-              position: {
-                x: 100,
-                y: 100,
-              },
-              type: "customNode",
+              id: uuid,
+              label: "ID",
+              type: "INT",
+              additionalParameters: "",
+              defaultValue: "",
+              foreignKey: false,
+              NotNull: true,
+              primaryKey: true,
+              unique: true,
             },
           ],
         },
+        position: {
+          x: 100,
+          y: 100,
+        },
+        type: "customNode",
       };
-    });
+      socket.emit("nodeCreate", { newNode, diagramId: data._id });
+      setData((prevData) => {
+        return {
+          ...prevData,
+          diagram: {
+            ...prevData.diagram,
+            nodes: [...prevData.diagram.nodes, newNode],
+          },
+        };
+      });
+    }
   };
 
   const handleDiagramRemove = (nodeId) => {
@@ -338,7 +357,7 @@ const AsideMenu = () => {
       <div className="menuPart">
         <div className="menuPartHeader">
           Diagram Body
-          <button onClick={handleDiagramAdd}>ADD</button>
+          <button onClick={handleNodeAdd}>ADD</button>
           <button onClick={() => toggleMenuPartBody("body")}>OTWIERANIE</button>
         </div>
         <div

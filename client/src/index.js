@@ -6,12 +6,15 @@ import App from "./App";
 // hooks
 import { AuthContextProvider } from "./context/AuthContext";
 import { EditorContextProvider } from "./context/EditorContext";
+import { ModalWindowContextProvider } from "./context/ModalWindowContext";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
 root.render(
   <AuthContextProvider>
     <EditorContextProvider>
-      <App />
+      <ModalWindowContextProvider>
+        <App />
+      </ModalWindowContextProvider>{" "}
     </EditorContextProvider>{" "}
   </AuthContextProvider>
 );
