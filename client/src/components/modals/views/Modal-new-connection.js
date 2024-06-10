@@ -19,8 +19,10 @@ const ModalNewConnection = ({ params }) => {
 
       console.log(sourceHandle, targetHandle);
 
-      const sourceHandlePosition = sourceHandle.split("-")[2];
-      const targetHandlePosition = targetHandle.split("-")[2];
+      const sourceHandlePosition = getColumnAndPosition(sourceHandle);
+      const targetHandlePosition = getColumnAndPosition(targetHandle);
+
+      console.log(sourceHandlePosition, targetHandlePosition);
 
       const id = uuidv4();
       const edge = {
@@ -30,8 +32,8 @@ const ModalNewConnection = ({ params }) => {
         sourceHandle: sourceHandle,
         targetHandle: targetHandle,
         type: "smoothstep",
-        markerStart: `symbol-${sourceType}-${sourceHandlePosition}`,
-        markerEnd: `symbol-${targetType}-${targetHandlePosition}`,
+        markerStart: `symbol-${sourceType}-${sourceHandlePosition.position}`,
+        markerEnd: `symbol-${targetType}-${targetHandlePosition.position}`,
       };
 
       console.log("Edge: ", edge);
@@ -51,6 +53,12 @@ const ModalNewConnection = ({ params }) => {
 
       socket.emit("add-edge", { edge, diagramId: data._id });
     }
+  };
+  const getColumnAndPosition = (handle) => {
+    const handleParts = handle.split("-handle-");
+    return {
+      position: handleParts[1],
+    };
   };
 
   return (

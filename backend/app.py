@@ -146,7 +146,29 @@ def handle_options_login():
     response.headers.add('Access-Control-Allow-Methods', 'POST')
     return response
 
+# obsluga zmiany atrybutu w wezle
+@socket_manager.get_socketio().on('attributeChange')
+def handle_attribute_change(data):
+    print(data)
+    diagram_id = data['diagramId']
+    node_id = data['nodeId']
 
+    attribute_id = data['changedAttribute']['attributeId']
+    label = data['changedAttribute']['label']
+    type = data['changedAttribute']['type']
+    additionalParameters=data['changedAttribute']['additionalParameters']
+    defaultValue=data['changedAttribute']['defaultValue']
+    foreignKey=data['changedAttribute']['foreignKey']
+    notNull=data['changedAttribute']['notNull']
+    primaryKey=data['changedAttribute']['primaryKey']
+    unique=data['changedAttribute']['unique']
+
+    db['diagrams'].update_one(
+            {'_id': ObjectId(diagram_id), 'diagram.nodes.id': node_id},
+            {'$set': {'diagram.nodes.$.data.attributes.$[elem].label': label, 'diagram.nodes.$.data.attributes.$[elem].type': type, 'diagram.nodes.$.data.attributes.$[elem].additionalParameters': additionalParameters, 'diagram.nodes.$.data.attributes.$[elem].defaultValue': defaultValue, 'diagram.nodes.$.data.attributes.$[elem].foreignKey': foreignKey, 'diagram.nodes.$.data.attributes.$[elem].notNull': notNull, 'diagram.nodes.$.data.attributes.$[elem].primaryKey': primaryKey, 'diagram.nodes.$.data.attributes.$[elem].unique': unique}},
+            array_filters=[{'elem.id': attribute_id}]
+    )
+    emit('attributeChanged', {'data':data}, broadcast=True, include_self=False)
 if __name__ == '__main__':
     socket_manager.get_socketio().run(app, debug=True)
 

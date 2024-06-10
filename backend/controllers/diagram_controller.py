@@ -9,8 +9,11 @@ from database import Database
 import os
 from bson import ObjectId
 from sqlalchemy import create_engine, exc
-from sqlalchemy.exc import OperationalError, ProgrammingError, InterfaceError,ArgumentError
+from sqlalchemy.exc import (OperationalError, ProgrammingError, InterfaceError, DataError, 
+                            DatabaseError, IntegrityError, InternalError, NotSupportedError, 
+                            SQLAlchemyError)
 from socket_manager import SocketManager
+from sqlalchemy.engine.url import make_url
 
 
 from sqlalchemy import text
@@ -34,18 +37,31 @@ def create_diagram():
     userId = data['user_id']
     label = data['title']
 
-    print(userId + " " + label);
+    print(f"{userId} {label}")
    
-    new_diagram =diagram_model.create_diagram(userId, label)
-    if(new_diagram):
-        response = jsonify({"message": "Diagram został utworzony"})
+    result = diagram_model.create_diagram(userId, label)
+    if result.inserted_id:
+        # Pobierz pełny dokument
+        new_diagram = db.diagrams.find_one({"_id": result.inserted_id})
+        
+        # Konwertuj ObjectId na string
+        new_diagram['_id'] = str(new_diagram['_id'])
+        for member in new_diagram['members']:
+            member['userId'] = str(member['userId'])
+
+        response = jsonify({
+            "_id": new_diagram['_id'],
+            "members": new_diagram['members'],
+            "label": new_diagram['label'],
+            "diagram": new_diagram['diagram'],
+            "createdAt": new_diagram['createdAt'].isoformat()
+        })
         response.headers.add('Access-Control-Allow-Origin', '*')
         return response, 200
     else:
         response = jsonify({"message": "Nie można utworzyć diagramu"})
         response.headers.add('Access-Control-Allow-Origin', '*')
         return response, 500
-
 @diagram_controller.route('/get/<string:id>', methods=['GET'])
 def get_diagram(id):
     # Upewnij się, że identyfikator jest stringiem
@@ -59,8 +75,6 @@ def get_diagram(id):
             diagram[key] = str(value)
 
     return jsonify(diagram), 200
-
-
 
 @diagram_controller.route('/update/<int:id>', methods=['PUT'])
 def update_diagram(id):
@@ -177,7 +191,70 @@ def generate_sql():
 
 
 
-def generateQueriesArray():
+def generateQueriesArray(diagram):
+    queries = []
+    
+    # Process nodes to create table creation queries
+    for node in diagram['nodes']:
+        table_name = node['data']['label']
+        attributes = node['data']['attributes']
+        
+        columns = []
+        for attr in attributes:
+            column_def = f"{attr['label']} {attr['type']}"
+            if attr.get('primaryKey'):
+                column_def += " PRIMARY KEY"
+            if attr.get('notNull'):
+                column_def += " NOT NULL"
+            if attr.get('unique'):
+                column_def += " UNIQUE"
+            columns.append(column_def)
+        
+        columns_str = ", ".join(columns)
+        query = f"CREATE TABLE IF NOT EXISTS {table_name} ({columns_str});"
+        
+        queries.append({
+            "type": "table",
+            "name": table_name,
+            "status": "pending",
+            "query": query
+        })
+    
+    # Process edges to create relationship queries
+    for edge in diagram['edges']:
+        print(edge);
+        source_id = edge['source']
+        target_id = edge['target']
+        source_handle = edge['sourceHandle']
+        target_handle = edge['targetHandle']
+        
+        source_node = next((node for node in diagram['nodes'] if node['id'] == source_id), None)
+        target_node = next((node for node in diagram['nodes'] if node['id'] == target_id), None)
+        
+        if source_node and target_node:
+            source_table = source_node['data']['label']
+            target_table = target_node['data']['label']
+
+            # Extract source column label from source node's attributes
+            source_column_id = source_handle.split('-')[0]
+            source_column = next((attr['label'] for attr in source_node['data']['attributes'] if attr['id'] == source_column_id), None)
+
+            # Extract target column label from target node's attributes
+            target_column_id = target_handle.split('-')[0]
+            target_column = next((attr['label'] for attr in target_node['data']['attributes'] if attr['id'] == target_column_id), None)
+            
+            if source_column and target_column:
+                query = f"ALTER TABLE {target_table} ADD CONSTRAINT fk_{source_table.lower()}_{target_table.lower()} FOREIGN KEY ({target_column}) REFERENCES {source_table}({source_column});"
+                
+                queries.append({
+                    "type": "relationship",
+                    "name": f"{source_table}-{target_table}",
+                    "status": False,
+                    "query": query
+                })
+    print(queries)
+    return queries
+
     return [{"type":"table","name":"Person","status":"pending","query":"CREATE TABLE IF NOT EXISTS Person (e1 INT PRIMARY KEY NOT NULL,e2 INT UNIQUE NOT NULL);"},{"type":"table","name":"Student","status":False,"query":"CREATE TABLE IF NOT EXISTS Student (e6 INT PRIMARY KEY,e7 VARCHAR(255));"},{"type":"relationship","name":"Person-Student","status":False,"query":"ALTER TABLE Student ADD CONSTRAINTpol fk_person_student FOREIGN KEY (e6) REFERENCES Person(e1);"}]
 @diagram_controller.route('/generate-to-database-test-uri', methods=['POST'])
 def generate_to_database_test_uri():
@@ -193,7 +270,7 @@ def generate_to_database_test_uri():
         try:
             with engine.connect() as connection:
                 print("Połączenie z bazą danych udane!")
-                response = jsonify({"status": "success","queries":[{"type":"table","name":"Person","status":"pending","query":"CREATE TABLE IF NOT EXISTS Person (e1 INT PRIMARY KEY NOT NULL,e2 INT UNIQUE NOT NULL);"},{"type":"table","name":"Student","status":False,"query":"CREATE TABLE IF NOT EXISTS Student (e6 INT PRIMARY KEY,e7 VARCHAR(255));"},{"type":"relationship","name":"Person-Student","status":False,"query":"ALTER TABLE Student ADD CONSTRAINT fk_person_student FOREIGN KEY (e6) REFERENCES Person(e1);"}]})
+                response = jsonify({"status": "success","queries":generateQueriesArray(diagram)})
                 response.headers.add('Access-Control-Allow-Origin', '*')
                 return response, 200
         except (OperationalError, ProgrammingError, InterfaceError) as e:
@@ -209,54 +286,92 @@ def generate_to_database_test_uri():
         response = jsonify({"status": "error","error":str(e)})
         response.headers.add('Access-Control-Allow-Origin', '*')
         return response, 200
+
+
     
+
+
 @diagram_controller.route('/generate-to-database', methods=['POST'])
 def execute_queries():
-    # socket_manager.get_socketio().emit('query_result', {'query':'Person','success': True, 'message': "Person: Zapytanie wykonane poprawnie."})
     data = request.get_json()
     db_uri = data.get('db_url')
     json_queries = data.get('queries')
     print(json_queries)
-    # Utwórz silnik (engine) bazy danych
+    
     engine = create_engine(db_uri)
+    db_url = make_url(db_uri)
+
+
+    def generate_drop_queries(executed_queries):
+            print(executed_queries);
+            drop_queries = []
+            for executed in executed_queries:
+                if 'relationship' in executed['type']:
+                    table_name = executed['query'].split(' ')[2]
+                    constraint_name = executed['query'].split(' ')[5]
+                    drop_query = f"ALTER TABLE {table_name} DROP CONSTRAINT {constraint_name};"
+                    drop_queries.append(drop_query)
+                elif 'table' in executed['type']:
+                    table_name = executed['query'].split(' ')[5]
+                    drop_query = f"DROP TABLE IF EXISTS {table_name};"
+                    drop_queries.append(drop_query)
+            return drop_queries[::-1]  # Drop connections first, then tables
+
+    def emit_query_result(name, success, message, error=None):
+        result = {'query': name, 'success': success, 'message': message}
+        if error:
+            result['error'] = str(error)
+        socket_manager.get_socketio().emit('query_result', result)
+        print(message)
 
     try:
         with engine.connect() as connection:
             print("Połączenie z bazą danych udane!")
-            socket_manager.get_socketio().emit('query_start',{'message':'Generating process started.'});
-            # Rozpocznij transakcję
-            trans = connection.begin()
-            socket_manager.get_socketio().emit('query_start',{'message':'Transaction started.'});
-            try:
-                for obj in json_queries:
-                    sql_query = text(obj['query'])
-                   
-                    # Wykonaj zapytanie SQL
-                    connection.execute(sql_query)
+            socket_manager.get_socketio().emit('query_start', {'message': 'Generating process started.'})
 
+            if db_url.get_backend_name() == 'postgresql':
+                trans = connection.begin()
+                socket_manager.get_socketio().emit('query_start', {'message': 'Transaction started.'})
+
+            executed_queries = []
+            for obj in json_queries:
+                try:
+                    sql_query = text(obj['query'])
+                    connection.execute(sql_query)
+                    executed_queries.append(obj)
+                    
                     # Wyślij wiadomość użytkownikowi o powodzeniu
-                    query_status  ={'query':obj['name'],'success': True, 'message': f"{obj['name']}: Zapytanie wykonane poprawnie."}
-                    socket_manager.get_socketio().emit('query_result',query_status )
-                    print("Zapytanie wykonane poprawnie.")
-                # Zatwierdź transakcję
+                    emit_query_result(obj['name'], True, f"{obj['name']}: Zapytanie wykonane poprawnie.")
+                except (OperationalError, ProgrammingError, InterfaceError, DataError, 
+                        DatabaseError, IntegrityError, InternalError, NotSupportedError, SQLAlchemyError) as e:
+                    emit_query_result(obj['name'], False, f"{obj['name']}: Wystąpił błąd podczas wykonywania zapytania.", e)
+                    
+                    # Generowanie zapytań DROP dla połączeń i tabel
+                    drop_queries = generate_drop_queries(executed_queries)
+                    
+                    # Najpierw usuń połączenia, potem tabele
+                    for drop_query in drop_queries:
+                        try:
+                            connection.execute(text(drop_query))
+                            print(f"Zapytanie DROP wykonane: {drop_query}")
+                        except Exception as drop_e:
+                            print(f"Nie udało się wykonać zapytania DROP: {drop_query}, błąd: {drop_e}")
+                    
+                    response = jsonify({"success": False, "message": "An error occurred while executing queries. Performed DROP operations."})
+                    response.headers.add('Access-Control-Allow-Origin', '*')
+                    
+                    if db_url.get_backend_name() == 'postgresql':
+                        trans.rollback()
+
+                    return response, 200
+            
+            if db_url.get_backend_name() == 'postgresql':
                 trans.commit()
 
-                response = jsonify({"success": True, "message": "All queries executed successfully."})
-                response.headers.add('Access-Control-Allow-Origin', '*')
-                return response, 200
-
-            except (OperationalError, ProgrammingError, InterfaceError) as e:
-                trans.rollback()
-                print("Wystąpił błąd:", e)
-                socket_manager.get_socketio().emit('query_result', {'query':obj['name'],'success': False, 'message': f"{obj['name']}: Wystąpił błąd podczas wykonywania zapytania.",'error':str(e)})
-                # raise e
-                response = jsonify({"success": False, "message": "An errror occured while executing queries. Rolling back transaction."})
-                response.headers.add('Access-Control-Allow-Origin', '*')
-                return response, 200
+            response = jsonify({"success": True, "message": "All queries executed successfully."})
+            response.headers.add('Access-Control-Allow-Origin', '*')
+            return response, 200
+    
     except (OperationalError, ProgrammingError, InterfaceError) as e:
         print("Błąd połączenia z bazą danych:", e)
-        return {"success": False, "message": "Błąd połączenia z bazą danych."}
-
-
-
-    
+        return {"success": False, "message": "Błąd połączenia z bazą danych."}, 500

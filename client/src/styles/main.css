@@ -15,6 +15,7 @@ body {
   height: 100vh;
   overflow: hidden;
   background: var(--color_light_grey);
+  background: white;
 }
 
 body #root {

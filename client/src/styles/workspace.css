@@ -1,65 +1,172 @@
-.diagramList {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-    list-style-type: none;
-    padding: 0;
+.diagramGallery {
+  display: flex;
+  flex-wrap: wrap;
+  /* gap: 1rem; */
+  list-style-type: none;
+  padding: 0;
 }
 
-.diagramList .diagramItem {
-    flex: 0.25;
-    margin-bottom: 0.5rem;
-    height: 200px;
-    max-height: 200px;
-    padding: 0.5rem;
-    display: flex;
-    justify-content: flex-start;
-    flex-direction: column;
-    align-items: center;
-    /* border: 1px solid var(--color_grey); */
-    padding: 0.5rem;
-    border-radius: 0.5rem;
-    box-sizing: border-box;
-    max-width: 300px;
-    background: var(--color_white);
-    box-shadow: var(--default-box-shadow);
-    cursor: pointer;
+.diagramGallery .diagramItem {
+  flex: 0 1 calc(25% - 1rem);
+  /* Każdy element zajmuje 20% szerokości minus margines */
+  margin: 0.5rem;
+  height: 200px;
+  max-height: 200px;
+  padding: 0.5rem;
+  display: flex;
+  justify-content: flex-start;
+  flex-direction: column;
+  align-items: center;
+  /* border: 1px solid var(--color_grey); */
+  border-radius: 0.5rem;
+  box-sizing: border-box;
+  /* max-width: 300px; */
+  background: var(--color_white);
+  box-shadow: var(--default-box-shadow);
+  cursor: pointer;
 }
 
-.diagramList .diagramItem .diagramPreview {
-    width: 100%;
-    height: 140px;
-    background: var(--color_grey);
-    border-radius: 0.5rem;
-    position: relative;
+.diagramGallery .diagramItem .diagramPreview {
+  width: 100%;
+  height: 140px;
+  background: var(--color_grey);
+  border-radius: 0.5rem;
+  position: relative;
 }
 
-.diagramList .diagramItem .diagramInfo {
-    width: 100%;
-    padding-top: 0.5rem;
+.diagramGallery .diagramItem .diagramInfo {
+  width: 100%;
+  padding-top: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 }
 
-.diagramList .diagramItem .diagramInfo p:last-of-type {
-    font-size: 12px;
+.diagramGallery .diagramItem .diagramInfo p:last-of-type {
+  font-size: 12px;
 }
 
 .diagramPreview img {
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    object-fit: cover;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  object-fit: cover;
 }
 
-.diagramList .diagramItem:hover .diagramActions {
-    height: 50px;
+.diagramHeader {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 5px;
+  position: relative;
 }
 
-.diagramActions {
-    /* background: yellowgreen; */
-    width: 100%;
-    height: 0px;
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    overflow: hidden;
+.diagramHeader .diagramMore {
+  height: 25px;
+  width: 25px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 25px;
+  border: 0;
+  border-radius: 0.5rem;
+  cursor: pointer;
+}
+
+.diagramHeader .diagramMore img {
+  width: 15px;
+  height: 15px;
+}
+
+.diagramHeader span {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.diagramHeader p {
+  text-overflow: ellipsis;
+  width: 100%;
+  text-wrap: nowrap;
+  text-align: left;
+}
+
+.diagramIconBg {
+  background: var(--color_blue);
+  border-radius: 0.5rem;
+  height: 25px;
+  width: 25px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 25px;
+}
+
+.diagramIconBg img {
+  width: 15px;
+  height: 15px;
+  filter: invert(1);
+}
+
+.greyText {
+  line-height: 1;
+}
+
+.greyBall {
+  background: var(--color_grey);
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+}
+
+.diagramDate {
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+}
+
+/* List */
+
+.diagramList {
+  display: flex;
+  flex-wrap: wrap;
+  /* gap: 1rem; */
+  list-style-type: none;
+  padding: 0;
+  flex-direction: column;
+}
+
+.diagramList .diagramItem {
+  flex: 1;
+  width: 100%;
+  padding: 0.5rem;
+  display: flex;
+  justify-content: flex-start;
+  flex-direction: row;
+  align-items: center;
+  /* border: 1px solid var(--color_grey); */
+  border-radius: 0.5rem;
+  box-sizing: border-box;
+  /* max-width: 300px; */
+  background: var(--color_white);
+  box-shadow: var(--default-box-shadow);
+  cursor: pointer;
+  margin-bottom: 0.5rem;
+}
+
+.diagramList .diagramItem .diagramPreview {
+  display: none;
+}
+
+.diagramList .diagramItem .diagramInfo {
+  width: 100%;
+  padding-top: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.diagramList .diagramItem .diagramInfo p:last-of-type {
+  font-size: 12px;
 }

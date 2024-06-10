@@ -173,6 +173,7 @@ select {
   width: calc(100% - 60% - calc(30px + 0.2rem));
   padding: 0 0.2rem;
   display: flex;
+  position: relative;
 }
 
 .project-attribute-remove {
@@ -257,7 +258,7 @@ select {
 .attribute-constraints {
   display: flex;
   gap: 0.2rem;
-  overflow-x: scroll;
+  /* overflow-x: scroll; */
 }
 
 .constraint {
@@ -268,4 +269,55 @@ select {
   box-sizing: border-box;
   text-transform: uppercase;
   text-wrap: nowrap;
+  position: relative;
+}
+
+.removeConstraint {
+  position: absolute;
+  top: -3px;
+  right: -3px;
+  background: var(--color_red);
+  border-radius: 50%;
+  width: 10px;
+  height: 10px;
+  cursor: pointer;
+}
+
+.attribute-context-menu {
+  position: absolute;
+  background: var(--color_white);
+  box-shadow: var(--default-box-shadow);
+  padding: 1rem;
+  list-style: none;
+  padding: 0;
+  right: 0;
+  top: calc(100% + 5px);
+  z-index: 10;
+  border-radius: 1rem;
+  padding: 0.5rem 0;
+}
+
+.attribute-context-menu li {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0 0.5rem;
+  padding-bottom: 0.5rem;
+  position: relative;
+}
+
+.attribute-context-menu li p {
+  text-wrap: nowrap;
+}
+
+.attribute-context-menu li button {
+  padding: 0.3rem 0.5rem;
+  border-radius: 0.5rem;
+  display: flex;
+  gap: 0.5rem;
+  border: none;
+  width: 100%;
+  justify-content: flex-start;
+  align-items: center;
+  cursor: pointer;
+  background: var(--color_white);
 }

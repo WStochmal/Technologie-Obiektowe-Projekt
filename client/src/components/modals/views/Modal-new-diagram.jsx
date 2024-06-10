@@ -4,9 +4,14 @@ import axios from "axios";
 
 // hooks
 import { useAuthContext } from "../../../hooks/useAuthContext";
+import { useToastContext } from "../../../hooks/useToastContext";
+import { useEditorContext } from "../../../hooks/useEditorContext";
+
 const ModalNewDiagram = ({ params }) => {
   const [diagramTitle, setDiagramTitle] = useState("");
   const { user } = useAuthContext();
+  const { addToast } = useToastContext();
+  const { setDiagrams } = useEditorContext();
 
   const handleAddNewDiagram = async () => {
     try {
@@ -24,13 +29,20 @@ const ModalNewDiagram = ({ params }) => {
       );
 
       console.log(response);
+      if (response.status === 200) {
+        addToast("Diagram has been created", "success");
+        setDiagrams((prevData) => [...prevData, response.data]);
+      } else {
+        addToast("Error creating diagram", "error");
+      }
     } catch (error) {
       console.log(error);
     }
   };
   return (
     <>
-      <h1>Dodawanie nowego diagramu</h1>
+      <h1>Add new diagram</h1>
+
       <input
         type="text"
         placeholder="Diagram title"

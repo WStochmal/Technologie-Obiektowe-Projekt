@@ -16,6 +16,11 @@ import icon_plus from "../../../assets/icons/plus.png";
 import icon_minus from "../../../assets/icons/minus.png";
 import icon_close from "../../../assets/icons/close.png";
 
+// svg
+import KeyIcon from "../../../assets/svg/Key";
+import UniqueIcon from "../../../assets/svg/Unique";
+import NotNullIcon from "../../../assets/svg/NotNull";
+
 const EditorListAttributesWindow = () => {
   const { data, setData, selectedNodeId, setSelectedNodeId } =
     useEditorContext();
@@ -23,6 +28,9 @@ const EditorListAttributesWindow = () => {
   const { user, socket } = useAuthContext();
   const [searchText, setSearchText] = useState("");
   const [isLeftPanelOpen, setIsLeftPanelOpen] = useState(true);
+  const [isAttributeContexMenuOpen, setIsAttributeContexMenuOpen] =
+    useState(false);
+  const [contextAttributeId, setContextAttributeId] = useState(null);
 
   useEffect(() => {
     if (selectedNodeId) {
@@ -57,7 +65,7 @@ const EditorListAttributesWindow = () => {
               defaultType: "no default",
               defaultValue: "",
               foreignKey: false,
-              NotNull: true,
+              notNull: true,
               primaryKey: true,
               unique: true,
             },
@@ -163,14 +171,14 @@ const EditorListAttributesWindow = () => {
   // Handle adding a new attribute to the selected node
   const handleDiagramAttributeAdd = (nodeId) => {
     const newAttribute = {
-      id: uuidv4(),
+      id: uuidv4().replace(/-/g, "_"),
       label: "Attribute",
       type: "INT",
       additionalParameters: "",
-      defaultType: "no default",
+      defaultType: "none",
       defaultValue: "",
       foreignKey: false,
-      NotNull: false,
+      notNull: false,
       primaryKey: false,
       unique: false,
     };
@@ -237,6 +245,96 @@ const EditorListAttributesWindow = () => {
       nodeId,
       attributeId,
     });
+  };
+
+  const handleDiagramAttributeChange = (
+    nodeId,
+    attributeId,
+    label,
+    type,
+    additionalParameters,
+    defaultType,
+    defaultValue,
+    foreignKey,
+    notNull,
+    primaryKey,
+    unique
+  ) => {
+    const node = data.diagram.nodes.find((node) => node.id === nodeId);
+    const attribute = node
+      ? node.data.attributes.find((attr) => attr.id === attributeId)
+      : null;
+
+    const changedAttribute = {
+      attributeId: attributeId,
+      label: label || (attribute ? attribute.label : ""),
+      type: type || (attribute ? attribute.type : ""),
+      additionalParameters:
+        additionalParameters ||
+        (attribute ? attribute.additionalParameters : ""),
+      defaultType: defaultType || (attribute ? attribute.defaultType : ""),
+      defaultValue: defaultValue || (attribute ? attribute.defaultValue : ""),
+      foreignKey:
+        foreignKey !== undefined
+          ? foreignKey
+          : attribute
+          ? attribute.foreignKey
+          : false,
+      notNull:
+        notNull !== undefined ? notNull : attribute ? attribute.notNull : false,
+      primaryKey:
+        primaryKey !== undefined
+          ? primaryKey
+          : attribute
+          ? attribute.primaryKey
+          : false,
+      unique:
+        unique !== undefined ? unique : attribute ? attribute.unique : false,
+    };
+    console.log(changedAttribute);
+
+    setData((prevData) => {
+      const newNodes = prevData.diagram.nodes.map((node) => {
+        if (node.id === nodeId) {
+          const newAttributes = node.data.attributes.map((attr) => {
+            if (attr.id === attributeId) {
+              return {
+                ...attr,
+                ...changedAttribute,
+              };
+            }
+            return attr;
+          });
+          return {
+            ...node,
+            data: {
+              ...node.data,
+              attributes: newAttributes,
+            },
+          };
+        }
+        return node;
+      });
+
+      return {
+        ...prevData,
+        diagram: {
+          ...prevData.diagram,
+          nodes: newNodes,
+        },
+      };
+    });
+
+    socket.emit("attributeChange", {
+      changedAttribute,
+      diagramId: data._id,
+      nodeId: nodeId,
+    });
+  };
+
+  const handleOpenContextMenu = (attributeId) => {
+    setIsAttributeContexMenuOpen(true);
+    setContextAttributeId(attributeId);
   };
 
   return (
@@ -386,18 +484,92 @@ const EditorListAttributesWindow = () => {
                   <div className="project-attribute" key={attributeIdx}>
                     <div className="attribute-elem project-attribute-label">
                       {" "}
-                      <input type="text" value={attribute.label} />
+                      <input
+                        type="text"
+                        value={attribute.label}
+                        onChange={(e) => {
+                          handleDiagramAttributeChange(
+                            selectedNode.id,
+                            attribute.id,
+                            e.target.value,
+                            undefined,
+                            undefined,
+                            undefined,
+                            undefined,
+                            undefined,
+                            undefined,
+                            undefined,
+                            undefined
+                          );
+                        }}
+                      />
                     </div>
                     <div className="attribute-elem project-attribute-type">
-                      <input type="text" value={attribute.type} />
+                      <input
+                        type="text"
+                        value={attribute.type}
+                        onChange={(e) => {
+                          handleDiagramAttributeChange(
+                            selectedNode.id,
+                            attribute.id,
+                            undefined,
+                            e.target.value,
+                            undefined,
+                            undefined,
+                            undefined,
+                            undefined,
+                            undefined,
+                            undefined,
+                            undefined
+                          );
+                        }}
+                      />
                     </div>
                     <div className="attribute-elem project-attribute-default">
-                      <select defaultValue={attribute.defaultType}>
-                        <option value="no">no default</option>
+                      <select
+                        defaultValue={attribute.defaultType}
+                        onChange={(e) => {
+                          handleDiagramAttributeChange(
+                            selectedNode.id,
+                            attribute.id,
+                            undefined,
+                            undefined,
+                            undefined,
+                            e.target.value,
+                            undefined,
+                            undefined,
+                            undefined,
+                            undefined,
+                            undefined
+                          );
+                        }}
+                      >
+                        <option value="none">no default</option>
                         <option value="sequence">sequence</option>
-                        <option value="sequence">constant</option>
+                        <option value="constant">constant</option>
                       </select>
-                      <input type="text" value={attribute.defaultValue} />
+                      <input
+                        type="text"
+                        value={attribute.defaultValue}
+                        disabled={
+                          attribute.defaultType !== "none" ? false : true
+                        }
+                        onChange={(e) => {
+                          handleDiagramAttributeChange(
+                            selectedNode.id,
+                            attribute.id,
+                            undefined,
+                            undefined,
+                            undefined,
+                            undefined,
+                            e.target.value,
+                            undefined,
+                            undefined,
+                            undefined,
+                            undefined
+                          );
+                        }}
+                      />
                     </div>
                     <div className="attribute-elem project-attribute-constraints">
                       <div className="attribute-constraints">
@@ -407,6 +579,7 @@ const EditorListAttributesWindow = () => {
                             style={{ background: "rgba(255,215,0,.5)" }}
                           >
                             Primary key
+                            <div className="removeConstraint"></div>
                           </div>
                         )}
                         {attribute.foreignKey && (
@@ -415,6 +588,24 @@ const EditorListAttributesWindow = () => {
                             style={{ background: "rgba(255,228,225,.5)" }}
                           >
                             Foreign Key
+                            <div
+                              className="removeConstraint"
+                              onClick={(e) => {
+                                handleDiagramAttributeChange(
+                                  selectedNode.id,
+                                  attribute.id,
+                                  undefined,
+                                  undefined,
+                                  undefined,
+                                  undefined,
+                                  undefined,
+                                  undefined,
+                                  undefined,
+                                  false,
+                                  undefined
+                                );
+                              }}
+                            ></div>
                           </div>
                         )}
                         {attribute.unique && (
@@ -423,23 +614,144 @@ const EditorListAttributesWindow = () => {
                             style={{ background: "rgba(30,144,255,.5)" }}
                           >
                             Unique
+                            <div
+                              className="removeConstraint"
+                              onClick={(e) => {
+                                handleDiagramAttributeChange(
+                                  selectedNode.id,
+                                  attribute.id,
+                                  undefined,
+                                  undefined,
+                                  undefined,
+                                  undefined,
+                                  undefined,
+                                  undefined,
+                                  undefined,
+                                  undefined,
+                                  false
+                                );
+                              }}
+                            ></div>
                           </div>
                         )}
-                        {attribute.NotNull && (
+                        {attribute.notNull && (
                           <div
                             className="constraint"
                             style={{ background: "rgba(50,205,50,.5)" }}
                           >
                             Not null
+                            <div
+                              className="removeConstraint"
+                              onClick={(e) => {
+                                handleDiagramAttributeChange(
+                                  selectedNode.id,
+                                  attribute.id,
+                                  undefined,
+                                  undefined,
+                                  undefined,
+                                  undefined,
+                                  undefined,
+                                  undefined,
+                                  false,
+                                  undefined,
+                                  undefined
+                                );
+                              }}
+                            ></div>
                           </div>
                         )}
                       </div>
                       <button
                         className="btn btn-bordered"
-                        onClick={handleNodeAdd}
+                        onClick={(e) => {
+                          handleOpenContextMenu(attribute.id);
+                        }}
                       >
                         <img src={icon_plus} alt="icon_plus" />
                       </button>
+                      {isAttributeContexMenuOpen &&
+                        contextAttributeId === attribute.id && (
+                          <ul className="attribute-context-menu">
+                            <li>
+                              <button
+                                onClick={(e) => {
+                                  handleDiagramAttributeChange(
+                                    selectedNode.id,
+                                    attribute.id,
+                                    undefined,
+                                    undefined,
+                                    undefined,
+                                    undefined,
+                                    undefined,
+                                    undefined,
+                                    undefined,
+                                    true,
+                                    undefined
+                                  );
+                                }}
+                              >
+                                <KeyIcon
+                                  width={18}
+                                  height={18}
+                                  color={"black"}
+                                />
+                                <p>Primary key</p>
+                              </button>
+                            </li>
+                            <li>
+                              <button
+                                onClick={(e) => {
+                                  handleDiagramAttributeChange(
+                                    selectedNode.id,
+                                    attribute.id,
+                                    undefined,
+                                    undefined,
+                                    undefined,
+                                    undefined,
+                                    undefined,
+                                    undefined,
+                                    undefined,
+                                    undefined,
+                                    true
+                                  );
+                                }}
+                              >
+                                <UniqueIcon
+                                  width={18}
+                                  height={18}
+                                  color={"black"}
+                                />
+                                <p>Unique</p>
+                              </button>
+                            </li>
+                            <li>
+                              <button
+                                onClick={(e) => {
+                                  handleDiagramAttributeChange(
+                                    selectedNode.id,
+                                    attribute.id,
+                                    undefined,
+                                    undefined,
+                                    undefined,
+                                    undefined,
+                                    undefined,
+                                    undefined,
+                                    true,
+                                    undefined,
+                                    undefined
+                                  );
+                                }}
+                              >
+                                <NotNullIcon
+                                  width={18}
+                                  height={18}
+                                  color={"black"}
+                                />
+                                <p>Not Null</p>
+                              </button>
+                            </li>
+                          </ul>
+                        )}
                     </div>
                     <div className="attribute-elem project-attribute-remove">
                       <button

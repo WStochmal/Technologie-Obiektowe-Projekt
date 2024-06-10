@@ -13,7 +13,6 @@ import { useControlContext } from "../../../hooks/useControlContext";
 import { useEditorContext } from "../../../hooks/useEditorContext";
 
 const CustomNode = ({ data }) => {
-  console.log(data);
   const [isActive, setIsActive] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
 

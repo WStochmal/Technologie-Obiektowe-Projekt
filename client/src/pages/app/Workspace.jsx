@@ -25,18 +25,36 @@ import DiagramScreenshot from "../../components/editor/diagramScreenshot/Diagram
 // icons
 import icon_delete from "../../assets/icons/delete.png";
 import icon_arrow from "../../assets/icons/arrow.png";
+import icon_more from "../../assets/icons/more.png";
+import icon_diagram from "../../assets/icons/diagram.png";
+import DiagramContextMenu from "../../common/diagram/contextMenu/DiagramContextMenu";
+import { useEditorContext } from "../../hooks/useEditorContext";
 
 const WorkspacePage = () => {
-  const [diagrams, setDiagrams] = useState([]);
   const { user } = useAuthContext();
   const navigate = useNavigate();
   const { openModal } = useModalWindowContext();
+  const [isContextMenuOpen, setIsContextMenuOpen] = useState(false);
+  const [diagramId, setDiagramId] = useState(null);
+  const { diagrams, setDiagrams } = useEditorContext();
+  const [viewType, setViewType] = useState("Gallery");
+  const [searchValue, setSearchValue] = useState("");
 
   useEffect(() => {
     if (user) {
       fetchData();
     }
   }, [user]);
+
+  const handleOpenContextMenu = (diagramId) => {
+    console.log("handleOpenContextMenu", diagramId);
+    setIsContextMenuOpen(true);
+    setDiagramId(diagramId);
+  };
+  const closeContextMenu = () => {
+    setIsContextMenuOpen(false);
+    setDiagramId(null);
+  };
 
   const fetchData = async () => {
     try {
@@ -73,46 +91,116 @@ const WorkspacePage = () => {
     openModal("NewDiagramModal", {});
   };
 
+  const handleChangeView = (type) => {
+    switch (type) {
+      case "list":
+        setViewType("List");
+        break;
+      case "gallery":
+        setViewType("Gallery");
+        break;
+      default:
+        setViewType("Gallery");
+        break;
+    }
+  };
+
   return (
     <div className="content">
       <div className="diagramListHeader">
         <button className="defaultBtn" onClick={createNewDiagram}>
           Create
         </button>
+        <button
+          onClick={() => {
+            handleChangeView("list");
+          }}
+        >
+          Lista
+        </button>
+        <button
+          onClick={() => {
+            handleChangeView("gallery");
+          }}
+        >
+          Galeria
+        </button>
+        <input
+          type="text"
+          placeholder="Search"
+          onChange={(e) => {
+            setSearchValue(e.target.value);
+          }}
+        />
       </div>
       <h1 className="header greyText">My diagrams</h1>
-      <div className="diagramList">
-        {diagrams.map((diagram) => (
-          <div key={diagram._id} className="diagramItem">
-            <div className="diagramPreview">
-              {diagrams && <Preview diagram={diagram} />}
-            </div>
-            <div className="diagramInfo">
-              <p>{diagram.label}</p>
-              <p className="greyText">
-                {formatDateString(diagram.createdAt, true)}
-              </p>
-              <div className="diagramActions">
-                <button
-                  className="removeBtn"
-                  onClick={() => {
-                    deleteDiagram(diagram._id);
-                  }}
-                >
-                  <img src={icon_delete} alt="icon_delete" />
-                </button>
-                <button
-                  className="removeBtn"
-                  onClick={() => {
-                    navigate(`/editor/${diagram._id}`);
-                  }}
-                >
-                  <img src={icon_arrow} alt="icon_arrow" />
-                </button>
+
+      <div className={"diagram" + viewType}>
+        {diagrams
+          .filter((diagram) =>
+            diagram.label.toLowerCase().includes(searchValue.toLowerCase())
+          )
+          .map((diagram) => (
+            <div
+              key={diagram._id}
+              className="diagramItem"
+              onClick={(e) => {
+                e.preventDefault();
+                navigate(`/editor/${diagram._id}`);
+              }}
+            >
+              <div className="diagramHeader">
+                <span>
+                  <div className="diagramIconBg">
+                    <img src={icon_diagram} alt="icon_diagram" />
+                  </div>
+                  <p>{diagram.label}</p>
+                </span>
+                <span>
+                  <button
+                    className="diagramMore"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      handleOpenContextMenu(diagram._id);
+                    }}
+                  >
+                    <img src={icon_more} alt="icon_more" />
+                  </button>
+                </span>
+                {isContextMenuOpen && diagramId === diagram._id && (
+                  <DiagramContextMenu
+                    diagramId={diagramId}
+                    onClose={closeContextMenu}
+                  />
+                )}
+              </div>
+              <div className="diagramPreview">
+                {diagrams && <Preview diagram={diagram} />}
+              </div>
+              <div className="diagramInfo">
+                {diagram &&
+                  diagram.members.map((member) => {
+                    if (member.type === "owner") {
+                      return (
+                        <div key={member.userId} className="avatar">
+                          <img
+                            src={member.image}
+                            alt={`${member.firstname} ${member.lastname}`}
+                          />
+                        </div>
+                      );
+                    }
+                  })}
+                <div className="diagramDate">
+                  <div className="greyBall"></div>
+                  <p className="greyText">
+                    {formatDateString(diagram.createdAt, false)}
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))}
       </div>
     </div>
   );

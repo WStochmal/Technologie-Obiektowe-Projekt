@@ -4,6 +4,7 @@ export const EditorContext = createContext();
 
 export const EditorContextProvider = ({ children }) => {
   const [data, setData] = useState();
+  const [diagrams, setDiagrams] = useState([]);
   const [activeMembers, setActiveMembers] = useState([]);
 
   const [selectedNodeId, setSelectedNodeId] = useState(null);
@@ -13,6 +14,8 @@ export const EditorContextProvider = ({ children }) => {
       value={{
         data,
         setData,
+        diagrams,
+        setDiagrams,
         activeMembers,
         selectedNodeId,
         setActiveMembers,

@@ -17,8 +17,9 @@ class User:
     def find_user_by_id(self, id):
         return self.collection.find_one({"_id": id})
     
-    def find_users_by_ids(self,user_ids):
-        users = self.collection.find({"_id": {"$in": [ObjectId(user_id) for user_id in user_ids]}})
+    def find_users_by_ids(self, user_ids):
+        object_ids = [ObjectId(user_id) for user_id in user_ids if ObjectId.is_valid(user_id)]
+        users = self.collection.find({"_id": {"$in": object_ids}})
         return list(users)
 
 
