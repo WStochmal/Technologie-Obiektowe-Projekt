@@ -1,7 +1,6 @@
 header {
   position: fixed;
   top: 0.5rem;
-  /* left: 1rem; */
   border-radius: 1rem;
   max-height: 60px;
   padding: 1rem;
@@ -24,13 +23,12 @@ header div.headerPart {
 
 header span {
   box-shadow: var(--default-box-shadow);
-  background: var(--color_white);
+  background: var(--color_background_primary);
   width: auto;
   height: 100%;
   border-radius: 1rem;
   display: flex;
   align-items: center;
-  /* overflow: hidden; */
 }
 
 header span p {
@@ -124,7 +122,7 @@ header button.menu {
   position: absolute;
   top: 100%;
   right: 0.5rem;
-  background: var(--color_white);
+  background: var(--color_background_primary);
   border-radius: 1rem;
   box-shadow: var(--default-box-shadow);
   flex-direction: column;

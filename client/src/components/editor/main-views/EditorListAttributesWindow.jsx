@@ -411,7 +411,9 @@ const EditorListAttributesWindow = () => {
                         <p
                           style={{
                             color:
-                              selectedNode === node.id ? "white" : "initial",
+                              selectedNode === node.id
+                                ? "var(--color_text_primary)"
+                                : "var(--color_text_primary)",
                           }}
                         >
                           {node.data.label}
@@ -579,15 +581,6 @@ const EditorListAttributesWindow = () => {
                             style={{ background: "rgba(255,215,0,.5)" }}
                           >
                             Primary key
-                            <div className="removeConstraint"></div>
-                          </div>
-                        )}
-                        {attribute.foreignKey && (
-                          <div
-                            className="constraint"
-                            style={{ background: "rgba(255,228,225,.5)" }}
-                          >
-                            Foreign Key
                             <div
                               className="removeConstraint"
                               onClick={(e) => {
@@ -606,6 +599,14 @@ const EditorListAttributesWindow = () => {
                                 );
                               }}
                             ></div>
+                          </div>
+                        )}
+                        {attribute.foreignKey && (
+                          <div
+                            className="constraint"
+                            style={{ background: "rgba(255,228,225,.5)" }}
+                          >
+                            Foreign Key
                           </div>
                         )}
                         {attribute.unique && (

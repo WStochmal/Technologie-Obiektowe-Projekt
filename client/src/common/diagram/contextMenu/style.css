@@ -1,6 +1,6 @@
 .diagramContextMenu {
   position: absolute;
-  background: var(--color_white);
+  background: var(--color_background_primary);
   box-shadow: var(--default-box-shadow);
   padding: 1rem;
   list-style: none;
@@ -39,7 +39,7 @@
   justify-content: flex-start;
   align-items: center;
   cursor: pointer;
-  background: var(--color_white);
+  background: transparent;
 }
 
 .diagramContextMenu li button img {
@@ -48,7 +48,7 @@
 }
 
 .diagramContextMenu li button:hover {
-  background: var(--color_grey);
+  backdrop-filter: brightness(0.8);
 }
 
 li.borderBottom {
@@ -58,7 +58,7 @@ li.borderBottom {
 .downloadOptions {
   display: none;
   position: absolute;
-  background: var(--color_white);
+  background: var(--color_background_primary);
   box-shadow: var(--default-box-shadow);
   padding: 1rem;
   list-style: none;

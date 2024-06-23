@@ -249,7 +249,7 @@ def generateQueriesArray(diagram):
                 queries.append({
                     "type": "relationship",
                     "name": f"{source_table}-{target_table}",
-                    "status": False,
+                    "status": 'pending',
                     "query": query
                 })
     print(queries)

@@ -358,7 +358,13 @@ function Editor() {
             <div style={{ height: "100%", width: "100%" }}>
               {isLoading && <Loader />}
               {!isLoading && (
-                <div ref={reactFlowWrapper} style={{ height: "100%" }}>
+                <div
+                  ref={reactFlowWrapper}
+                  style={{
+                    height: "100%",
+                    background: "var(--color_background_primary)",
+                  }}
+                >
                   <Connections />
                   <ReactFlow
                     ref={reactFlowRef}

@@ -1,5 +1,6 @@
+// libraries
 import { useEffect, useState } from "react";
-
+import { useNavigate } from "react-router-dom";
 import { useAuthContext } from "../hooks/useAuthContext";
 import { useEditorContext } from "../hooks/useEditorContext";
 
@@ -9,16 +10,20 @@ import icon_arrow from "../assets/icons/arrow.png";
 import icon_export from "../assets/icons/export.png";
 import icon_share from "../assets/icons/share.png";
 import icon_generate from "../assets/icons/generate.png";
-
 import icon_user from "../assets/icons/user.png";
 import icon_logout from "../assets/icons/logout.png";
 import icon_diagram from "../assets/icons/diagram.png";
 import icon_close from "../assets/icons/close.png";
-import { useNavigate } from "react-router-dom";
-import { useLogout } from "../hooks/useLogout";
+import icon_moon from "../assets/icons/moon.png";
+
+// components
 import HeaderExport from "../components/header/Header-export";
 import HeaderImport from "../components/header/Header-import";
 import HeaderGenerate from "../components/header/Header-generate";
+
+// hooks
+import { useLogout } from "../hooks/useLogout";
+import { useThemeContext } from "../hooks/useThemeContext";
 
 const Header = ({ isOpen = false, onClick }) => {
   const [isEditor, setIsEditor] = useState(false);
@@ -26,6 +31,7 @@ const Header = ({ isOpen = false, onClick }) => {
   const [isExportModalMenu, setIsExportModalMenu] = useState(false);
   const [isGenerateModalMenu, setIsGenerateModalMenu] = useState(false);
   const [isShareModalMenu, setIsShareModalMenu] = useState(false);
+  const { theme, toggleTheme } = useThemeContext();
 
   const { user } = useAuthContext();
 
@@ -110,7 +116,11 @@ const Header = ({ isOpen = false, onClick }) => {
                   {activeMembers &&
                     activeMembers.slice(0, 3).map((user, userIdx) => (
                       <div className="avatar" key={userIdx}>
-                        <img src={user.image} alt="avatar" />
+                        <img
+                          src={user.image}
+                          alt="avatar"
+                          className="avatarImg"
+                        />
                       </div>
                     ))}
                   {activeMembers && activeMembers.length > 3 && (
@@ -155,7 +165,7 @@ const Header = ({ isOpen = false, onClick }) => {
                 }}
               >
                 <div className="avatar">
-                  <img src={user.image} alt="avatar" />
+                  <img src={user.image} alt="avatar" className="avatarImg" />
                 </div>{" "}
                 <p> {user.firstname} </p>{" "}
               </button>{" "}
@@ -178,6 +188,15 @@ const Header = ({ isOpen = false, onClick }) => {
                       className="headerIcon"
                     />{" "}
                     <p>My diagrams</p>
+                  </button>{" "}
+                  <button className="defaultBtn" onClick={toggleTheme}>
+                    {" "}
+                    <img
+                      src={icon_moon}
+                      alt="icon_moon"
+                      className="headerIcon"
+                    />{" "}
+                    <p>Dark theme</p>
                   </button>{" "}
                   <button className="defaultBtn" onClick={logout}>
                     {" "}

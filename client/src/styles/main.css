@@ -1,172 +1,173 @@
 @font-face {
-  font-family: OpenSans;
-  src: url("../fonts/OpenSans.ttf");
+    font-family: OpenSans;
+    src: url("../fonts/OpenSans.ttf");
 }
 
 @import url("./colorPalette.css");
 * {
-  margin: 0;
-  padding: 0;
-  font-family: OpenSans;
+    margin: 0;
+    padding: 0;
+    font-family: OpenSans;
+    transition: background 0.3s, color 0.3s;
 }
 
 body {
-  width: 100%;
-  height: 100vh;
-  overflow: hidden;
-  background: var(--color_light_grey);
-  background: white;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+    background: var(--color_background_primary);
 }
 
 body #root {
-  width: 100%;
-  height: 100%;
+    width: 100%;
+    height: 100%;
 }
 
 main {
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
 }
 
-/* header {
-  width: 100%;
-  height: 60px;
-  background: white;
-  box-sizing: border-box;
-  border-bottom: 1px solid #ccc;
-} */
-
 section {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    position: relative;
 }
 
 section div#diagramsList {
-  width: 300px;
-  min-width: 300px;
-  height: 100%;
-  box-sizing: border-box;
-  border-left: 1px solid #ccc;
-  padding: 0.5rem;
+    width: 300px;
+    min-width: 300px;
+    height: 100%;
+    box-sizing: border-box;
+    border-left: 1px solid #ccc;
+    padding: 0.5rem;
 }
 
 p.header {
-  font-size: 12px;
-  color: var(--color_grey);
-  margin-bottom: 0.5rem;
+    font-size: 12px;
+    color: var(--color_grey);
+    margin-bottom: 0.5rem;
 }
 
 button.menuItem {
-  width: 100%;
-  margin-bottom: 0.5rem;
-  padding: 0.5rem;
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
+    width: 100%;
+    margin-bottom: 0.5rem;
+    padding: 0.5rem;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
 }
 
 button.menuItem img {
-  width: 20px;
-  height: 20px;
-  margin-right: 0.5rem;
+    width: 20px;
+    height: 20px;
+    margin-right: 0.5rem;
 }
 
 button.menuItem p {
-  font-size: 15px;
+    font-size: 15px;
 }
 
 #diagramListBtn {
-  width: 20px;
-  height: 20px;
-  cursor: pointer;
-  position: absolute;
-  top: 1rem;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    position: absolute;
+    top: 1rem;
 }
 
 .greyText {
-  color: var(--color_grey);
+    color: var(--color_grey);
 }
 
 .redText {
-  color: var(--color_red);
+    color: var(--color_red);
 }
 
 .hightlightText {
-  cursor: pointer;
-  color: var(--color_blue);
+    cursor: pointer;
+    color: var(--color_blue);
 }
 
 .header {
-  font-size: 28px;
-  font-weight: 600;
-  margin-bottom: 1rem;
+    font-size: 28px;
+    font-weight: 600;
+    margin-bottom: 1rem;
 }
 
 .subHeader {
-  font-size: 20px;
+    font-size: 20px;
 }
 
 button.defaultBtn {
-  padding: 0.15rem 0.5rem;
-  border-radius: 1rem;
-  border: none;
-  background: transparent;
-  cursor: pointer;
-  box-sizing: border-box;
-  justify-content: center;
-  align-items: center;
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-  margin: 0.25rem;
-  box-sizing: border-box;
+    padding: 0.15rem 0.5rem;
+    border-radius: 1rem;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    box-sizing: border-box;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    margin: 0.25rem;
+    box-sizing: border-box;
 }
 
 button.defaultBtn img.headerIcon {
-  width: 18px;
-  height: 18px;
-  padding: 6px;
-  filter: invert(0.1);
+    width: 18px;
+    height: 18px;
+    padding: 6px;
+    filter: invert(0.1);
 }
 
 button.defaultBtn:hover {
-  background: var(--color_grey);
+    /* background: var(--color_grey); */
+    backdrop-filter: brightness(0.8);
 }
 
 div.content {
-  position: relative;
-  width: 80%;
-  left: 50%;
-  transform: translateX(-50%);
-  max-width: 1400px;
-  padding: 150px 0;
-  box-sizing: border-box;
-  min-height: 100%;
+    position: relative;
+    width: 80%;
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: 1400px;
+    padding: 150px 0;
+    box-sizing: border-box;
+    min-height: 100%;
 }
 
 .contentFlex {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .generateBtn {
-  background: var(--color_blue) !important;
+    background: var(--color_blue) !important;
 }
 
 .generateBtn:hover {
-  background: var(--color_blue_hover) !important;
+    background: var(--color_blue_hover) !important;
 }
 
 .generateBtn p {
-  color: var(--color_white);
+    color: var(--color_white);
+}
+
+p {
+    color: var(--color_text_primary);
+}
+
+img:not(.avatarImg) {
+    filter: var(--default-image-invert) !important;
 }
 
 .generateBtn img {
-  filter: invert(1) !important;
+    filter: invert(1) !important;
 }

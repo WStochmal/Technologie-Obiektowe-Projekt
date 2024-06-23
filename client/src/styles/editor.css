@@ -12,7 +12,7 @@ button.react-flow__controls-button {
   height: auto;
   gap: 0.25rem;
   box-sizing: border-box;
-  background: var(--color_white);
+  background: var(--color_background_primary);
   border: 0 !important;
 }
 
@@ -31,7 +31,7 @@ button.react-flow__controls-button svg {
   border: 0;
   box-shadow: var(--default-box-shadow);
   border-radius: 1rem;
-  background: var(--color_white);
+  background: var(--color_background_primary);
 }
 
 button.react-flow__controls-button:hover {
@@ -81,7 +81,7 @@ div#editorWindow .editorPanel {
   height: 100%;
   background: 1rem;
   box-shadow: var(--default-box-shadow);
-  background: var(--color_white);
+  background: var(--color_background_primary);
   border-radius: 1rem;
   overflow: hidden;
 }

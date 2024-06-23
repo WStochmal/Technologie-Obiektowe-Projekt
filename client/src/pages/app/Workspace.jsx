@@ -11,6 +11,7 @@ import "../../styles/workspace.css";
 import { useAuthContext } from "../../hooks/useAuthContext";
 import { useNavigate } from "react-router-dom";
 import { useModalWindowContext } from "../../hooks/useModalWindowContext";
+import { useEditorContext } from "../../hooks/useEditorContext";
 
 // utils
 import { formatDateString } from "../../utils/functions";
@@ -21,14 +22,17 @@ import { ControlContextProvider } from "../../context/ControlContext";
 
 // components
 import DiagramScreenshot from "../../components/editor/diagramScreenshot/DiagramScreenshot";
+import DiagramContextMenu from "../../common/diagram/contextMenu/DiagramContextMenu";
 
 // icons
 import icon_delete from "../../assets/icons/delete.png";
 import icon_arrow from "../../assets/icons/arrow.png";
 import icon_more from "../../assets/icons/more.png";
 import icon_diagram from "../../assets/icons/diagram.png";
-import DiagramContextMenu from "../../common/diagram/contextMenu/DiagramContextMenu";
-import { useEditorContext } from "../../hooks/useEditorContext";
+import icon_search from "../../assets/icons/search.png";
+import icon_plus from "../../assets/icons/plus.png";
+import icon_gallery from "../../assets/icons/gallery.png";
+import icon_list from "../../assets/icons/list.png";
 
 const WorkspacePage = () => {
   const { user } = useAuthContext();
@@ -69,6 +73,7 @@ const WorkspacePage = () => {
           },
         }
       );
+      console.log(response.data);
       setDiagrams(response.data);
       console.log(response.data);
     } catch (error) {
@@ -108,32 +113,45 @@ const WorkspacePage = () => {
   return (
     <div className="content">
       <div className="diagramListHeader">
-        <button className="defaultBtn" onClick={createNewDiagram}>
-          Create
-        </button>
-        <button
-          onClick={() => {
-            handleChangeView("list");
-          }}
-        >
-          Lista
-        </button>
-        <button
-          onClick={() => {
-            handleChangeView("gallery");
-          }}
-        >
-          Galeria
-        </button>
-        <input
-          type="text"
-          placeholder="Search"
-          onChange={(e) => {
-            setSearchValue(e.target.value);
-          }}
-        />
+        <div className="diagramListHeader-block">
+          <button className="defaultBtn" onClick={createNewDiagram}>
+            <img src={icon_plus} alt="icon_add" className="headerIcon" />
+            <p>Create</p>
+          </button>
+        </div>
+        <div className="diagramListHeader-block">
+          <div className="diagramList-viewOptions">
+            <button
+              onClick={() => {
+                handleChangeView("list");
+              }}
+            >
+              <img src={icon_list} alt="icon_list" />
+            </button>
+            <button
+              onClick={() => {
+                handleChangeView("gallery");
+              }}
+            >
+              <img src={icon_gallery} alt="icon_gallery" />
+            </button>
+          </div>
+          <div className="search-container">
+            <img src={icon_search} alt="icon_search" />
+            <span className="searchIcon"></span>
+            <input
+              type="text"
+              placeholder="Search"
+              onChange={(e) => {
+                setSearchValue(e.target.value);
+              }}
+            />
+          </div>
+        </div>
       </div>
-      <h1 className="header greyText">My diagrams</h1>
+      <h1 className="header greyText" style={{ marginTop: "2rem" }}>
+        My diagrams
+      </h1>
 
       <div className={"diagram" + viewType}>
         {diagrams
@@ -186,6 +204,7 @@ const WorkspacePage = () => {
                         <div key={member.userId} className="avatar">
                           <img
                             src={member.image}
+                            className="avatarImg"
                             alt={`${member.firstname} ${member.lastname}`}
                           />
                         </div>

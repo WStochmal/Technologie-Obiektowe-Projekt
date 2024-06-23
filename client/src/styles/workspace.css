@@ -18,10 +18,10 @@
   flex-direction: column;
   align-items: center;
   /* border: 1px solid var(--color_grey); */
-  border-radius: 0.5rem;
+  border-radius: 1rem;
   box-sizing: border-box;
   /* max-width: 300px; */
-  background: var(--color_white);
+  background: var(--color_background_primary);
   box-shadow: var(--default-box-shadow);
   cursor: pointer;
 }
@@ -73,6 +73,11 @@
   border: 0;
   border-radius: 0.5rem;
   cursor: pointer;
+  background: transparent;
+}
+
+.diagramHeader .diagramMore:hover {
+  backdrop-filter: brightness(0.8);
 }
 
 .diagramHeader .diagramMore img {
@@ -169,4 +174,77 @@
 
 .diagramList .diagramItem .diagramInfo p:last-of-type {
   font-size: 12px;
+}
+
+.diagramListHeader {
+  background: var(--color_background_primary);
+  box-shadow: var(--default-box-shadow);
+  border-radius: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0rem 0.2rem;
+  box-sizing: border-box;
+}
+
+.diagramListHeader .diagramListHeader-block {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  justify-content: flex-end;
+}
+
+.diagramListHeader .diagramListHeader-block .search-container {
+  margin-right: 0.25rem;
+  width: 10.5%;
+}
+
+.diagramListHeader .diagramListHeader-block .search-container {
+  box-sizing: border-box;
+  transition: width 0.3s;
+  position: relative;
+  z-index: 1;
+}
+
+.diagramListHeader .diagramListHeader-block .search-container input {
+  box-shadow: var(--default-box-shadow);
+  border: 0;
+  background: transparent;
+  box-sizing: border-box;
+  width: 100%;
+  transition: border 0.3s;
+  position: relative;
+  z-index: 2;
+}
+
+.diagramListHeader .diagramListHeader-block .search-container:focus-within {
+  width: 100%;
+}
+
+.diagramListHeader .diagramListHeader-block .search-container input:focus {
+  border: 1px solid var(--color_blue);
+  outline: none;
+  box-shadow: none;
+}
+
+.diagramList-viewOptions {
+  display: flex;
+  border: 1px solid var(--color_grey);
+  padding: 0.25rem 0.5rem;
+  gap: 1rem;
+  border-radius: 1rem;
+}
+
+.diagramList-viewOptions button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.diagramList-viewOptions button img {
+  width: 18px;
+  height: 18px;
 }

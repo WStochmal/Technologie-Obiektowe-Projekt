@@ -114,7 +114,7 @@
 }
 
 .project-attribute {
-  background: var(--color_light_grey);
+  background: var(--color_background_secondary);
   display: flex;
   margin-bottom: 0.25rem;
   padding: 0.2rem 0;
@@ -141,6 +141,7 @@ select {
   border-radius: 0.5rem;
   margin-left: 0.2rem;
   box-sizing: border-box;
+  color: var(--color_text_primary);
 }
 
 .attribute-elem input {
@@ -148,6 +149,7 @@ select {
   width: 100%;
   box-sizing: border-box;
   padding: 0 0.2rem;
+  color: var(--color_text_primary);
 }
 
 .project-attribute-label {
@@ -179,7 +181,7 @@ select {
 .project-attribute-remove {
   width: calc(30px + 0.2rem);
   padding-left: 0.2rem;
-  background: white;
+  background: var(--color_background_secondary);
   border-right: none;
 }
 
@@ -208,8 +210,10 @@ select {
 }
 
 .search-container {
-  width: 100%;
   position: relative;
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
 }
 
 .search-container input {
@@ -217,8 +221,9 @@ select {
   padding: 0.2rem 0 0.2rem calc(16px + 1rem);
   border-radius: 0.5rem;
   border: 1px solid var(--color_grey);
-  background: var(--color_light_grey);
+  background: var(--color_background_secondary);
   box-sizing: border-box;
+  color: var(--color_text_primary);
 }
 
 .search-container img {
@@ -251,8 +256,9 @@ select {
   padding: 0.2rem 0 0.2rem 0.2rem;
   border-radius: 0.5rem;
   border: 1px solid var(--color_grey);
-  background: var(--color_light_grey);
+  background: var(--color_background_secondary);
   box-sizing: border-box;
+  color: var(--color_text_primary);
 }
 
 .attribute-constraints {

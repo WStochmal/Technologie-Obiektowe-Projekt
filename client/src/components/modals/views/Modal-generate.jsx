@@ -34,6 +34,8 @@ const ModalGenerate = ({ params }) => {
       { db_url: connectionString, diagram: data.diagram }
     );
 
+    console.log(response.data);
+
     setConnectionStatus(response.data.status);
 
     if (response.data.status === "success") {

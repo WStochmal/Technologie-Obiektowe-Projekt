@@ -7,6 +7,7 @@ import { v4 as uuidv4 } from "uuid";
 import "./style.css";
 import { useAuthContext } from "../../../hooks/useAuthContext";
 const ModalNewConnection = ({ params }) => {
+  console.log("Params: ", params);
   const [sourceType, setSourceType] = useState("");
   const [targetType, setTargetType] = useState("");
   const { setData, data } = useEditorContext();
@@ -36,7 +37,36 @@ const ModalNewConnection = ({ params }) => {
         markerEnd: `symbol-${targetType}-${targetHandlePosition.position}`,
       };
 
-      console.log("Edge: ", edge);
+      // Check if source and target nodes have primary keys
+      const sourceNode = data.diagram.nodes.find((node) => node.id === source);
+      const targetNode = data.diagram.nodes.find((node) => node.id === target);
+
+      console.log(sourceNode, targetNode);
+      const sourcePrimaryKey = sourceNode.data.attributes.find(
+        (attr) => attr.primaryKey
+      );
+      const targetPrimaryKey = targetNode.data.attributes.find(
+        (attr) => attr.primaryKey
+      );
+      console.log("-----------------");
+      console.log(sourcePrimaryKey, targetPrimaryKey);
+      if (!sourcePrimaryKey && targetPrimaryKey) {
+        // Set foreignKey to true for source node's appropriate attribute
+        const sourceForeignKeyAttr = sourceNode.data.attributes.find(
+          (attr) => attr.id === sourceHandle
+        );
+        if (sourceForeignKeyAttr) {
+          sourceForeignKeyAttr.foreignKey = true;
+        }
+      } else if (sourcePrimaryKey && !targetPrimaryKey) {
+        // Set foreignKey to true for target node's appropriate attribute
+        const targetForeignKeyAttr = targetNode.data.attributes.find(
+          (attr) => attr.id === targetHandle
+        );
+        if (targetForeignKeyAttr) {
+          targetForeignKeyAttr.foreignKey = true;
+        }
+      }
 
       setData((prevData) => {
         const edges = prevData.diagram.edges;
@@ -54,6 +84,7 @@ const ModalNewConnection = ({ params }) => {
       socket.emit("add-edge", { edge, diagramId: data._id });
     }
   };
+
   const getColumnAndPosition = (handle) => {
     const handleParts = handle.split("-handle-");
     return {

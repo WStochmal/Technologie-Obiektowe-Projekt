@@ -27,7 +27,7 @@ const DiagramContextMenu = ({ diagramId, onClose }) => {
   const menuRef = useRef(null);
   const { user } = useAuthContext();
   const { addToast } = useToastContext();
-  const { setData } = useEditorContext();
+  const { setDiagrams } = useEditorContext();
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -48,8 +48,8 @@ const DiagramContextMenu = ({ diagramId, onClose }) => {
     const response = await DeleteDiagramFunction(diagramId, user.token);
     if (response) {
       addToast("Diagram has been deleted", "success");
-      setData((prevData) =>
-        prevData.filter((diagram) => diagram.id !== diagramId)
+      setDiagrams((prevData) =>
+        prevData.filter((diagram) => diagram._id !== diagramId)
       );
     } else {
       alert("Error deleting diagram");

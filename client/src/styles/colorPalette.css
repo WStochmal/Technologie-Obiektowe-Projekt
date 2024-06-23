@@ -1,22 +1,49 @@
 :root {
-  --lighter_background_color: rgb(252, 254, 255);
-  --darker_background_color: rgb(245, 247, 248);
-  --border_color: rgb(222, 224, 225);
-  --main_font_color: rgb(7, 9, 10);
-  --grey_font_color: rgb(132, 134, 135);
-  --invert: 0.1;
-  --button_hover: rgba(0, 0, 0, 0.05);
-  --invert_background: rgb(22, 24, 25);
-  --invert_font_color: rgb(237, 239, 240);
-  --main_color: rgba(10, 160, 255, 1);
-  --color_red: #b20000;
-  --color_yellow: #e6e600;
-  --color_blue: rgba(10, 160, 255, 1);
-  --color_blue_hover: rgba(0, 130, 235, 1);
-  --color_grey: #d5d5de;
-  --color_light_grey: #fafafc;
-  --color_green: #00b300;
-  --color_white: #fff;
-  /* --default-box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25); */
-  --default-box-shadow: 0 6px 40px 0 rgba(0, 0, 0, 0.1);
+    /* Main background colors */
+    --color_background_primary: rgba(255, 255, 255, 1);
+    --color_background_secondary: rgba(245, 247, 248, 1);
+    /* Text colors */
+    --color_text_primary: rgba(0, 0, 0, 1);
+    --lighter_background_color: rgb(252, 254, 255);
+    --darker_background_color: rgb(245, 247, 248);
+    --border_color: rgb(222, 224, 225);
+    --main_font_color: rgb(7, 9, 10);
+    --grey_font_color: rgb(132, 134, 135);
+    --invert: 0.1;
+    --button_hover: rgba(0, 0, 0, 0.05);
+    --invert_background: rgb(22, 24, 25);
+    --invert_font_color: rgb(237, 239, 240);
+    --main_color: rgba(10, 160, 255, 1);
+    --color_red: #b20000;
+    --color_yellow: #e6e600;
+    --color_blue: rgba(10, 160, 255, 1);
+    --color_blue_hover: rgba(0, 130, 235, 1);
+    --color_grey: #d5d5de;
+    --color_light_grey: #fafafc;
+    --color_green: #00b300;
+    --color_white: #fff;
+    /* --default-box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25); */
+    /* Other default settings */
+    --default-box-shadow: 0 6px 40px 0 rgba(0, 0, 0, 0.1);
+    --default-image-invert: invert(0.1);
+}
+
+body[data-theme="dark"] {
+    /* Main background colors */
+    --color_background_primary: #212121;
+    --color_background_secondary: #2b2b2b;
+    /* Text colors */
+    --color_text_primary: rgba(255, 255, 255, 1);
+    --lighter_background_color: rgb(22, 24, 25);
+    --darker_background_color: rgb(18, 20, 21);
+    --border_color: rgb(50, 50, 50);
+    --main_font_color: rgb(237, 239, 240);
+    --grey_font_color: rgb(150, 150, 150);
+    --invert: 0.9;
+    --button_hover: rgba(255, 255, 255, 0.1);
+    --invert_background: rgb(245, 247, 248);
+    --invert_font_color: rgb(7, 9, 10);
+    /* Other default settings */
+    --default-box-shadow: 0 6px 40px 0 rgba(0, 0, 0, 0.75);
+    --default-image-invert: invert(0.9);
 }
